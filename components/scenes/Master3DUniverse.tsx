@@ -82,7 +82,7 @@ const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[var(--radius-sm)] border border-[var(--border-accent)] bg-[var(--accent-dim)] shadow-xl backdrop-blur-md">
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] animate-ping" />
             <span className="mono-label text-xs font-semibold text-[var(--accent)] tracking-wider">
-              [AWAITING INTRODUCTION LABEL]
+              Future Engineer
             </span>
           </div>
 
@@ -92,13 +92,13 @@ const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
             </div>
 
             <h1 className="text-5xl sm:text-6xl font-extrabold text-[var(--text-primary)] font-heading tracking-tight leading-none">
-              [AWAITING NAME]
+              Thomas Joseph
             </h1>
 
             <div className="h-0.5 w-36 bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent mx-auto my-4" />
 
             <p className="mono-label text-lg text-[var(--text-secondary)] tracking-wider">
-              [AWAITING PROFESSIONAL TITLE]
+              Mechanical/Aerospace engineer
             </p>
           </div>
         </div>
@@ -142,7 +142,7 @@ const LinkageNode3D: React.FC<{ progress: number }> = ({ progress }) => {
             PHILOSOPHY // NODE_02
           </div>
           <blockquote className="text-2xl sm:text-3xl font-light leading-relaxed text-[var(--text-primary)] border-l-4 border-[var(--accent)] pl-6 text-left font-heading bg-[var(--surface-graphite)]/95 p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] backdrop-blur-md shadow-2xl">
-            “[AWAITING ENGINEERING STATEMENT]”
+            “Driven by a passion for precision design engineering, quality manufacturing, and high-performance CAD systems in mechanical and aerospace engineering.”
           </blockquote>
         </div>
       </Html>
@@ -166,29 +166,29 @@ const ProfileNode3D: React.FC<{ progress: number }> = ({ progress }) => {
             <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
               SYSTEM_PROFILE // NODE_03
             </div>
-            <div className="mono-label text-xs text-[var(--text-muted)]">SPECIFICATION: VER_1.0</div>
+            <div className="mono-label text-xs text-[var(--text-muted)]">GPA: 3.9 // UCF 2029</div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-1 shadow-xl">
               <div className="mono-label text-[10px] text-[var(--text-muted)]">01 // DISCIPLINE</div>
-              <div className="text-xl font-bold text-[var(--text-primary)] font-heading">[AWAITING DISCIPLINE]</div>
+              <div className="text-xl font-bold text-[var(--text-primary)] font-heading">Mechanical Engineering</div>
             </div>
             <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-1 shadow-xl">
               <div className="mono-label text-[10px] text-[var(--text-muted)]">02 // SECONDARY</div>
-              <div className="text-xl font-bold text-[var(--text-primary)] font-heading">[AWAITING SECONDARY DISCIPLINE]</div>
+              <div className="text-xl font-bold text-[var(--text-primary)] font-heading">Aerospace Engineering</div>
             </div>
             <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-1 col-span-2 shadow-xl">
               <div className="mono-label text-[10px] text-[var(--text-muted)]">03 // CORE FOCUS</div>
-              <div className="text-sm text-[var(--text-secondary)] font-mono">[AWAITING ENGINEERING FOCUS]</div>
+              <div className="text-sm text-[var(--text-secondary)] font-mono">High-Performance Aerostructures, Propulsion & Quality CAD Modeling</div>
             </div>
             <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 col-span-2 shadow-xl">
-              <div className="mono-label text-[10px] text-[var(--text-muted)]">04 // SKILLS</div>
+              <div className="mono-label text-[10px] text-[var(--text-muted)]">04 // TECHNICAL SKILLS</div>
               <div className="flex flex-wrap gap-2">
-                <TagPill label="[AWAITING SKILLS]" variant="accent" size="sm" />
-                <TagPill label="CAD Modeling" variant="default" size="sm" />
-                <TagPill label="FEA Stress Analysis" variant="default" size="sm" />
-                <TagPill label="Kinematics" variant="default" size="sm" />
+                <TagPill label="SOLIDWORKS" variant="accent" size="sm" />
+                <TagPill label="MATLAB" variant="default" size="sm" />
+                <TagPill label="KINEMATICS" variant="default" size="sm" />
+                <TagPill label="Finite-Element-Analysis" variant="default" size="sm" />
               </div>
             </div>
           </div>

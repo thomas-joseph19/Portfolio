@@ -37,10 +37,10 @@ export const Nav: React.FC = () => {
             className="flex items-center gap-2 font-mono text-xs tracking-widest text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors focus-ring p-1 rounded-[var(--radius-sm)]"
           >
             <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-accent)] bg-[var(--surface-graphite)] font-bold text-[var(--accent)]">
-              EP
+              TJ
             </div>
             <span className="hidden sm:inline-block font-semibold">
-              [ENGINEERING PORTFOLIO]
+              THOMAS JOSEPH
             </span>
           </Link>
 

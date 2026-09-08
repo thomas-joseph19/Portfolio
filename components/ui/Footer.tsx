@@ -9,10 +9,10 @@ export const Footer: React.FC = () => {
           <div className="space-y-2">
             <div className="flex items-center gap-2 font-mono text-xs text-[var(--text-primary)]">
               <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-              <span className="font-semibold">[ENGINEERING PORTFOLIO SYSTEM]</span>
+              <span className="font-semibold">THOMAS JOSEPH // PORTFOLIO</span>
             </div>
             <p className="text-xs text-[var(--text-secondary)] max-w-md font-mono">
-              SCROLL-DRIVEN MONOCHROME TECHNICAL INTERFACE • SINGLE SOURCE OF TRUTH CONTENT ARCHITECTURE
+              MECHANICAL & AEROSPACE ENGINEERING PORTFOLIO
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export const Footer: React.FC = () => {
 
         <div className="mt-8 border-t border-[var(--border-subtle)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] text-[var(--text-muted)]">
           <div>
-            © {new Date().getFullYear()} [AWAITING NAME]. ALL RIGHTS RESERVED.
+            © 2026 Thomas Joseph. ALL RIGHTS RESERVED.
           </div>
           <div className="flex items-center gap-4">
             <span>SYS_VER: 1.0.0</span>

@@ -2,7 +2,7 @@ import { constructMetadata } from "@/lib/seo";
 
 export const metadata = constructMetadata({
   title: "Contact",
-  description: "Direct contact channels and communication interface.",
+  description: "Direct contact details and communication channels for Thomas Joseph.",
   path: "/contact",
 });
 
@@ -14,63 +14,92 @@ export default function ContactPage() {
           COMMUNICATION // DIRECT_INTERFACE
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-[var(--text-primary)] font-heading tracking-tight">
-          [AWAITING CONTACT HEADLINE]
+          CONTACT THOMAS JOSEPH
         </h1>
         <p className="text-sm sm:text-base text-[var(--text-secondary)] max-w-xl leading-relaxed">
-          [AWAITING CONTACT DESCRIPTION]
+          GET IN TOUCH FOR ENGINEERING OPPORTUNITIES, RESEARCH COLLABORATIONS, AND TECHNICAL INQUIRIES.
         </p>
       </header>
 
       {/* Direct Contact Options Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Email */}
-        <div className="p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors">
+        <a
+          href="mailto:thomas.joseph19@outlook.com"
+          className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors group"
+        >
           <div className="space-y-2">
             <div className="mono-label text-[11px] text-[var(--accent)]">01 // EMAIL</div>
-            <div className="text-sm font-semibold text-[var(--text-primary)] font-mono">
-              [AWAITING EMAIL ADDRESS]
+            <div className="text-xs font-semibold text-[var(--text-primary)] font-mono break-all group-hover:text-[var(--accent)]">
+              thomas.joseph19@outlook.com
             </div>
           </div>
-          <div className="pt-4 border-t border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-muted)]">
-            DIRECT EMAIL COMMUNICATION
+          <div className="pt-4 border-t border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
+            SEND EMAIL →
           </div>
-        </div>
+        </a>
+
+        {/* Phone */}
+        <a
+          href="tel:8134517308"
+          className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors group"
+        >
+          <div className="space-y-2">
+            <div className="mono-label text-[11px] text-[var(--accent)]">02 // PHONE</div>
+            <div className="text-sm font-semibold text-[var(--text-primary)] font-mono group-hover:text-[var(--accent)]">
+              813-451-7308
+            </div>
+          </div>
+          <div className="pt-4 border-t border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
+            CALL / TEXT →
+          </div>
+        </a>
 
         {/* LinkedIn */}
-        <div className="p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors">
+        <a
+          href="https://linkedin.com/in/thomas-joseph"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors group"
+        >
           <div className="space-y-2">
-            <div className="mono-label text-[11px] text-[var(--accent)]">02 // LINKEDIN</div>
-            <div className="text-sm font-semibold text-[var(--text-primary)] font-mono">
-              [AWAITING LINKEDIN PROFILE]
+            <div className="mono-label text-[11px] text-[var(--accent)]">03 // LINKEDIN</div>
+            <div className="text-xs font-semibold text-[var(--text-primary)] font-mono break-all group-hover:text-[var(--accent)]">
+              in/thomas-joseph
             </div>
           </div>
-          <div className="pt-4 border-t border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-muted)]">
-            PROFESSIONAL NETWORK
+          <div className="pt-4 border-t border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
+            VIEW LINKEDIN →
           </div>
-        </div>
+        </a>
 
         {/* GitHub */}
-        <div className="p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors">
+        <a
+          href="https://github.com/thomas-joseph19"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors group"
+        >
           <div className="space-y-2">
-            <div className="mono-label text-[11px] text-[var(--accent)]">03 // GITHUB</div>
-            <div className="text-sm font-semibold text-[var(--text-primary)] font-mono">
-              [AWAITING GITHUB PROFILE]
+            <div className="mono-label text-[11px] text-[var(--accent)]">04 // GITHUB</div>
+            <div className="text-xs font-semibold text-[var(--text-primary)] font-mono break-all group-hover:text-[var(--accent)]">
+              thomas-joseph19
             </div>
           </div>
-          <div className="pt-4 border-t border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-muted)]">
-            CODE REPOSITORIES & OPEN SOURCE
+          <div className="pt-4 border-t border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
+            VIEW GITHUB →
           </div>
-        </div>
+        </a>
       </div>
 
       {/* Technical Status Indicator Box */}
       <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[var(--text-secondary)]">
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] animate-pulse" />
-          <span>AVAILABILITY STATUS: OPEN FOR ENGINEERING OPPORTUNITIES</span>
+          <span>LOCATION: TAMPA, FL • UCF MAY 2029</span>
         </div>
-        <div className="text-[var(--text-muted)]">
-          RESPONSE_TIME: ~24 HOURS
+        <div className="text-[var(--accent)] font-semibold">
+          STATUS: OPEN FOR ENGINEERING INTERNSHIPS & OPPORTUNITIES
         </div>
       </div>
     </div>
