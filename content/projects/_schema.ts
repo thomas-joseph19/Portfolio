@@ -7,8 +7,9 @@ export type ProjectStatus =
   | "archived";
 
 export interface MediaItem {
-  type: "image" | "video" | "cad-render" | "diagram";
+  type: "image" | "video" | "cad-render" | "diagram" | "3d-cad-model";
   src: string | null;        // null => render AWAITING MEDIA placeholder
+  cadModelUrl?: string | null; // URL path to .stl, .gltf, or .glb CAD model for interactive 3D rendering
   alt: string;
   aspectRatio: string;       // e.g. "16/9", "4/3" — required even when src is null
   caption?: string;
