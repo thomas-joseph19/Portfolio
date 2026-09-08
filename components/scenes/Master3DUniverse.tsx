@@ -69,23 +69,11 @@ const InfiniteCadGrid: React.FC = () => {
 
 // --- NODE 1: HERO / NAME NODE (Z = 8, Progress 0.00) ---
 const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
-  const meshRef = useRef<THREE.Group>(null);
-
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = progress * Math.PI * 4;
-    }
-  });
-
   const distFromCam = Math.abs(progress - 0.0);
   const opacity = Math.max(0, 1 - distFromCam * 4.5);
 
   return (
     <group position={[0, 0.2, 8]}>
-      <group position={[0, -0.2, -2.5]}>
-        <CustomCadModelLoader3D progress={progress} />
-      </group>
-
       <Html position={[0, 0, 0]} center distanceFactor={7}>
         <div
           style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
@@ -371,7 +359,7 @@ export const Master3DUniverse: React.FC = () => {
           03 // PROFILE
         </button>
         <button onClick={() => jumpToProgress(0.75)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.62 && targetProgress <= 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          04 // CAD KINEMATICS
+          04 // ROCKET TAKEOFF
         </button>
         <button onClick={() => jumpToProgress(1.00)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
           05 // ARCHITECTURE
