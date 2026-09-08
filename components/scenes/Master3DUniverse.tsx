@@ -9,6 +9,7 @@ import { getFeaturedProjects } from "@/lib/content";
 import { TagPill } from "@/components/ui/TagPill";
 import { Button } from "@/components/ui/Button";
 import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { CustomCadModelLoader3D } from "./CustomCadModelLoader3D";
 
 // --- 3D CATMULL-ROM CONTINUOUS CAMERA CURVE PATH ---
@@ -208,50 +209,108 @@ const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) =>
   );
 };
 
-// --- NODE 5: SYSTEM TERMINAL / ARCHITECTURE CONTINUATION (Z = -22, Progress 1.00) ---
+// --- NODE 5: SYSTEM TERMINAL / FEATURED PROJECTS CONTINUATION (Z = -22, Progress 1.00) ---
 const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const featuredProjects = getFeaturedProjects();
   const opacity = Math.min(1, Math.max(0, (progress - 0.75) / 0.20));
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -290, behavior: "smooth" });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 290, behavior: "smooth" });
+    }
+  };
 
   return (
     <group position={[0, 0.2, -22]}>
       <Html position={[0, 0, 0]} center distanceFactor={7}>
         <div
           style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
-          className="w-[880px] space-y-6 select-none font-sans transition-opacity duration-300"
+          className="w-[880px] space-y-4 select-none font-sans transition-opacity duration-300"
         >
-          {/* Header Bar */}
-          <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 bg-[var(--bg-primary)]/90 p-3 rounded-[var(--radius-sm)]">
-            <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
-              SYSTEM_TERMINAL // FEATURED PROJECTS & PATHWAYS
+          {/* Header Bar with Horizontal Carousel Controls */}
+          <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2.5 bg-[var(--bg-primary)]/90 p-3 rounded-[var(--radius-sm)] shadow-md">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
+              <div className="mono-label text-xs tracking-widest text-[var(--accent)] font-semibold">
+                SYSTEM_TERMINAL // FEATURED PROJECTS
+              </div>
             </div>
-            <div className="mono-label text-xs text-[var(--text-muted)]">
-              STAGE_05 // FINAL_WAYPOINT
+            
+            <div className="flex items-center gap-3 font-mono text-xs">
+              <span className="text-[var(--text-muted)] text-[11px] hidden sm:inline">HORIZONTALLY SCROLL →</span>
+              <button
+                onClick={handleScrollLeft}
+                className="px-2.5 py-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer"
+                title="Scroll Left"
+              >
+                ◀ PREV
+              </button>
+              <button
+                onClick={handleScrollRight}
+                className="px-2.5 py-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer"
+                title="Scroll Right"
+              >
+                NEXT ▶
+              </button>
             </div>
           </div>
 
-          {/* Featured Projects Showcase */}
-          <div className="grid grid-cols-3 gap-4">
+          {/* Horizontal Scroll Showcase (Shows 3 visible at once, horizontal scroll for 4th+) */}
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto pb-3 pt-1 snap-x snap-mandatory scroll-smooth focus:outline-none"
+            style={{ scrollbarWidth: "thin", scrollbarColor: "var(--accent-dim) transparent" }}
+          >
             {featuredProjects.map((project) => (
-              <div key={project.slug} className="p-4 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl">
-                <MediaPlaceholder item={project.thumbnail} />
-                <div className="text-base font-bold text-[var(--text-primary)] font-heading">{project.title || "[AWAITING TITLE]"}</div>
-                <div className="text-xs text-[var(--text-secondary)] line-clamp-2">{project.shortDescription}</div>
-                <Link href={`/projects/${project.slug}`} className="text-xs text-[var(--accent)] font-mono block hover:underline">
-                  VIEW CAD & SPEC →
-                </Link>
+              <div
+                key={project.slug}
+                className="w-[275px] shrink-0 snap-start p-4 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl transition-all duration-300 hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-2xl hover:shadow-[var(--accent-glow)] flex flex-col justify-between group"
+              >
+                <div className="space-y-2.5">
+                  <div className="overflow-hidden rounded-[var(--radius-sm)]">
+                    <MediaPlaceholder item={project.thumbnail} aspectRatio="16/9" />
+                  </div>
+                  <div className="text-sm font-bold text-[var(--text-primary)] font-heading group-hover:text-[var(--accent)] transition-colors line-clamp-1">
+                    {project.title || "[AWAITING TITLE]"}
+                  </div>
+                  <div className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
+                    {project.shortDescription}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-[var(--border-subtle)] flex items-center justify-between">
+                  <StatusBadge status={project.status} />
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="text-xs text-[var(--accent)] font-mono hover:underline inline-flex items-center gap-1 font-semibold"
+                  >
+                    SPEC & CAD →
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Explore Architecture Action Card */}
-          <div className="text-center space-y-4 bg-[var(--surface-graphite)]/95 p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] backdrop-blur-md shadow-2xl">
-            <h2 className="text-3xl font-extrabold text-[var(--text-primary)] font-heading">
-              EXPLORE THE PROJECTS ARCHIVE
-            </h2>
-            <div className="flex justify-center gap-4 pt-2">
+          {/* Compact Streamlined Action Footer */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--surface-graphite)]/95 p-5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] backdrop-blur-md shadow-2xl">
+            <div className="space-y-0.5 text-center sm:text-left">
+              <div className="text-base font-bold text-[var(--text-primary)] font-heading">
+                EXPLORE COMPLETE ENGINEERING ARCHIVE
+              </div>
+              <div className="text-xs text-[var(--text-secondary)] font-mono">
+                ACCESS FULL CAD MODELS, SYSTEM SCHEMATICS & SPECIFICATIONS
+              </div>
+            </div>
+            <div className="flex gap-3">
               <Button href="/projects" variant="primary" size="md">
-                PROJECT ARCHIVE
+                ALL PROJECTS →
               </Button>
               <Button href="/resume" variant="secondary" size="md">
                 RESUME
