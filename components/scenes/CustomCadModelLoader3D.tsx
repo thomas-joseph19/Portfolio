@@ -2,10 +2,10 @@
 
 import React, { useRef, useMemo, Suspense, Component, ReactNode } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
-import { GLTFLoader, DRACOLoader } from "three-stdlib";
+import { GLTFLoader, STLLoader, OBJLoader, DRACOLoader } from "three-stdlib";
 import * as THREE from "three";
 
-// Instantiate DRACOLoader for compressed CAD models
+// Instantiate DRACOLoader for compressed GLTF/GLB models
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
 
@@ -40,6 +40,174 @@ class CadErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState>
   }
 }
 
+// --- STL CAD MODEL LOADER ---
+const StlCadModelInner: React.FC<{ url: string }> = ({ url }) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const geometry = useLoader(STLLoader, url);
+
+  const { mesh, scale } = useMemo(() => {
+    if (!geometry) return { mesh: null, scale: 1 };
+    const geom = geometry.clone();
+    geom.computeVertexNormals();
+    geom.computeBoundingBox();
+
+    const box = geom.boundingBox || new THREE.Box3();
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    box.getCenter(center);
+    box.getSize(size);
+
+    geom.center(); // Center geometry at pivot
+
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetScale = maxDim > 0 ? 3.5 / maxDim : 1;
+
+    const material = new THREE.MeshStandardMaterial({
+      color: "#6fb3c2",
+      metalness: 0.85,
+      roughness: 0.2,
+      side: THREE.DoubleSide,
+    });
+
+    const m = new THREE.Mesh(geom, material);
+    return { mesh: m, scale: targetScale };
+  }, [geometry]);
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
+    }
+  });
+
+  if (!mesh) return null;
+
+  return (
+    <group ref={groupRef} scale={[scale, scale, scale]}>
+      <primitive object={mesh} />
+    </group>
+  );
+};
+
+// --- OBJ CAD MODEL LOADER ---
+const ObjCadModelInner: React.FC<{ url: string }> = ({ url }) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const obj = useLoader(OBJLoader, url);
+
+  const { object3D, scale } = useMemo(() => {
+    if (!obj) return { object3D: null, scale: 1 };
+    const cloned = obj.clone(true);
+
+    const box = new THREE.Box3().setFromObject(cloned);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    box.getCenter(center);
+    box.getSize(size);
+
+    cloned.position.sub(center);
+
+    cloned.traverse((child: any) => {
+      if (child.isMesh) {
+        child.material = new THREE.MeshStandardMaterial({
+          color: "#8a9ba8",
+          metalness: 0.9,
+          roughness: 0.25,
+          side: THREE.DoubleSide,
+        });
+      }
+    });
+
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetScale = maxDim > 0 ? 3.5 / maxDim : 1;
+
+    return { object3D: cloned, scale: targetScale };
+  }, [obj]);
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
+    }
+  });
+
+  if (!object3D) return null;
+
+  return (
+    <group ref={groupRef} scale={[scale, scale, scale]}>
+      <primitive object={object3D} />
+    </group>
+  );
+};
+
+// --- GLTF / GLB CAD MODEL LOADER ---
+const GltfCadModelInner: React.FC<{ url: string }> = ({ url }) => {
+  const groupRef = useRef<THREE.Group>(null);
+
+  const gltf = useLoader(GLTFLoader, url, (loader) => {
+    loader.setDRACOLoader(dracoLoader);
+  });
+
+  const { issMeshObject, scale } = useMemo(() => {
+    if (!gltf || !gltf.scene) return { issMeshObject: null, scale: 1 };
+
+    const fullAssembly = new THREE.Group();
+
+    gltf.scene.children.forEach((child) => {
+      // Exclude camera nodes to prevent scene offset
+      if (child.name !== "current camera" && !(child as THREE.Camera).isCamera) {
+        fullAssembly.add(child.clone(true));
+      }
+    });
+
+    if (fullAssembly.children.length === 0) {
+      fullAssembly.add(gltf.scene.clone(true));
+    }
+
+    fullAssembly.position.set(0, 0, 0);
+    fullAssembly.rotation.set(0, 0, 0);
+
+    const box = new THREE.Box3().setFromObject(fullAssembly);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    box.getCenter(center);
+    box.getSize(size);
+
+    fullAssembly.position.sub(center);
+
+    fullAssembly.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material.side = THREE.DoubleSide;
+        if (child.material.color) {
+          if (
+            child.material.color.r < 0.08 &&
+            child.material.color.g < 0.08 &&
+            child.material.color.b < 0.08
+          ) {
+            child.material.color.set("#5a6578");
+          }
+        }
+      }
+    });
+
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetScale = maxDim > 0 && maxDim < 10000 ? 3.5 / maxDim : 0.02;
+
+    return { issMeshObject: fullAssembly, scale: targetScale };
+  }, [gltf]);
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
+    }
+  });
+
+  if (!issMeshObject) return null;
+
+  return (
+    <group ref={groupRef} scale={[scale, scale, scale]}>
+      <primitive object={issMeshObject} />
+    </group>
+  );
+};
+
 // --- HIGH-PRECISION TSX NATIVE 3D INTERNATIONAL SPACE STATION COMPONENT ---
 const ISSPure3DModel: React.FC = () => {
   const groupRef = useRef<THREE.Group>(null);
@@ -47,7 +215,6 @@ const ISSPure3DModel: React.FC = () => {
 
   useFrame(({ clock }) => {
     if (groupRef.current) {
-      // Gentle floating animation (stationary stance, subtle vertical float)
       groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
     }
     if (dishRef.current) {
@@ -80,13 +247,11 @@ const ISSPure3DModel: React.FC = () => {
       {/* Dual Massive Solar Array Wings (Port & Starboard Arrays) */}
       {[-3.8, 3.8].map((yPos, sideIdx) => (
         <group key={sideIdx} position={[0, yPos, 0]}>
-          {/* Solar Panel Mounting Frame */}
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[5.2, 0.15, 0.1]} />
             <meshStandardMaterial color="#2d3748" metalness={0.8} />
           </mesh>
 
-          {/* Photovoltaic Panels (Upper & Lower arrays) */}
           {[-2.0, -0.7, 0.7, 2.0].map((xPos, pIdx) => (
             <group key={pIdx} position={[xPos, 0, 0]}>
               <mesh position={[0, 0, 1.5]}>
@@ -137,103 +302,6 @@ const ISSPure3DModel: React.FC = () => {
   );
 };
 
-interface ModelProps {
-  url: string;
-}
-
-const CadModelInner: React.FC<ModelProps> = ({ url }) => {
-  const groupRef = useRef<THREE.Group>(null);
-
-  // Detect GitHub Pages /Portfolio path
-  const isGhPages =
-    typeof window !== "undefined" && window.location.pathname.startsWith("/Portfolio");
-  const basePath = isGhPages ? "/Portfolio" : "";
-
-  // Format URL properly
-  const resolvedUrl = url.startsWith("blob:")
-    ? url
-    : url.startsWith("/")
-    ? `${basePath}${url}`
-    : url;
-
-  // Load GLTF with Draco compression support
-  const gltf = useLoader(GLTFLoader, resolvedUrl, (loader) => {
-    loader.setDRACOLoader(dracoLoader);
-  });
-
-  // Extract the complete ISS assembly (ignoring camera nodes)
-  const { issMeshObject, scale } = useMemo(() => {
-    if (!gltf || !gltf.scene) return { issMeshObject: null, scale: 1 };
-
-    // Create container for full ISS assembly
-    const fullAssembly = new THREE.Group();
-
-    gltf.scene.children.forEach((child) => {
-      // Exclude camera nodes to prevent scene offset
-      if (child.name !== "current camera" && !(child as THREE.Camera).isCamera) {
-        fullAssembly.add(child.clone(true));
-      }
-    });
-
-    if (fullAssembly.children.length === 0) {
-      fullAssembly.add(gltf.scene.clone(true));
-    }
-
-    // Reset root transforms
-    fullAssembly.position.set(0, 0, 0);
-    fullAssembly.rotation.set(0, 0, 0);
-
-    // Compute bounding box over entire ISS assembly
-    const box = new THREE.Box3().setFromObject(fullAssembly);
-    const center = new THREE.Vector3();
-    const size = new THREE.Vector3();
-    box.getCenter(center);
-    box.getSize(size);
-
-    // Center geometry at pivot [0, 0, 0]
-    fullAssembly.position.sub(center);
-
-    // Enhance materials for all sub-meshes
-    fullAssembly.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        child.material.side = THREE.DoubleSide;
-        if (child.material.color) {
-          if (
-            child.material.color.r < 0.08 &&
-            child.material.color.g < 0.08 &&
-            child.material.color.b < 0.08
-          ) {
-            child.material.color.set("#5a6578");
-          }
-        }
-      }
-    });
-
-    const maxDim = Math.max(size.x, size.y, size.z);
-    // Explicit scale factor for full ISS assembly (~190 units physical size -> 3.5 units target size)
-    const targetScale = maxDim > 0 ? 3.5 / maxDim : 0.02;
-
-    return { issMeshObject: fullAssembly, scale: targetScale };
-  }, [gltf]);
-
-  // Gentle floating animation (stationary stance, subtle vertical float)
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
-    }
-  });
-
-  if (!issMeshObject) {
-    return <ISSPure3DModel />;
-  }
-
-  return (
-    <group ref={groupRef} scale={[scale, scale, scale]}>
-      <primitive object={issMeshObject} />
-    </group>
-  );
-};
-
 interface CustomCadModelLoader3DProps {
   customModelUrl?: string | null;
   progress?: number;
@@ -242,14 +310,29 @@ interface CustomCadModelLoader3DProps {
 export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
   customModelUrl,
 }) => {
-  // Path to user's ISS.glb file: public/cad/ISS.glb
-  const defaultUrl = "/cad/ISS.glb";
-  const activeUrl = customModelUrl || defaultUrl;
+  const isGhPages =
+    typeof window !== "undefined" && window.location.pathname.startsWith("/Portfolio");
+  const basePath = isGhPages ? "/Portfolio" : "";
+
+  const defaultUrl = customModelUrl || "/cad/ISS.glb";
+  const resolvedUrl = defaultUrl.startsWith("blob:")
+    ? defaultUrl
+    : defaultUrl.startsWith("/")
+    ? `${basePath}${defaultUrl}`
+    : defaultUrl;
+
+  const ext = resolvedUrl.split(".").pop()?.toLowerCase();
 
   return (
     <CadErrorBoundary fallback={<ISSPure3DModel />}>
       <Suspense fallback={<ISSPure3DModel />}>
-        <CadModelInner url={activeUrl} />
+        {ext === "stl" ? (
+          <StlCadModelInner url={resolvedUrl} />
+        ) : ext === "obj" ? (
+          <ObjCadModelInner url={resolvedUrl} />
+        ) : (
+          <GltfCadModelInner url={resolvedUrl} />
+        )}
       </Suspense>
     </CadErrorBoundary>
   );
