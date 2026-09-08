@@ -64,32 +64,34 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
     loader.setDRACOLoader(dracoLoader);
   });
 
-  // Clone scene & compute bounding box to auto-center & scale user GLB CAD model
+  // Clone scene & compute bounding box to auto-center & scale user ISS.glb CAD model
   const { clonedScene, scale } = useMemo(() => {
     if (!gltf || !gltf.scene) return { clonedScene: null, scale: 1 };
     const scene = gltf.scene.clone(true);
 
-    // Compute bounding box excluding outlier datum nodes (> 1000 units)
     const box = new THREE.Box3();
-    let validMeshes = 0;
+    let validCount = 0;
 
     scene.traverse((child: any) => {
       if (child.isMesh && child.geometry) {
+        // Ensure geometry bounding box is computed
         child.geometry.computeBoundingBox();
-        const meshBox = child.geometry.boundingBox.clone();
-        meshBox.applyMatrix4(child.matrixWorld);
 
-        const sizeX = Math.abs(meshBox.max.x - meshBox.min.x);
-        const sizeY = Math.abs(meshBox.max.y - meshBox.min.y);
-        const sizeZ = Math.abs(meshBox.max.z - meshBox.min.z);
-
-        // Filter out outlier nodes
-        if (sizeX < 500 && sizeY < 500 && sizeZ < 500 && Math.abs(meshBox.min.x) < 500) {
-          box.expandByObject(child);
-          validMeshes++;
+        // Position attribute filtering to ignore outlier construction points (> 1000 units)
+        const posAttr = child.geometry.attributes.position;
+        if (posAttr) {
+          const v = new THREE.Vector3();
+          for (let i = 0; i < posAttr.count; i++) {
+            v.fromBufferAttribute(posAttr, i);
+            if (Math.abs(v.x) < 500 && Math.abs(v.y) < 500 && Math.abs(v.z) < 500) {
+              const worldV = v.clone().applyMatrix4(child.matrixWorld);
+              box.expandByPoint(worldV);
+              validCount++;
+            }
+          }
         }
 
-        // Enhance material visibility & contrast
+        // Enhance material visibility & contrast for dark CAD parts
         child.material.side = THREE.DoubleSide;
         if (child.material.color) {
           if (
@@ -106,7 +108,7 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
     const center = new THREE.Vector3();
     const size = new THREE.Vector3();
 
-    if (validMeshes > 0 && !box.isEmpty()) {
+    if (validCount > 0 && !box.isEmpty()) {
       box.getCenter(center);
       box.getSize(size);
     } else {
@@ -119,16 +121,13 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
     scene.position.sub(center);
 
     const maxDim = Math.max(size.x, size.y, size.z);
-    // Explicit scale for user's CAD model: scale factor between 0.02 and 0.05
-    let targetScale = 0.035;
-    if (maxDim > 0 && maxDim < 1000) {
-      targetScale = 3.5 / maxDim;
-    }
+    // Precise scale calculation for ISS.glb (~190 units physical dimension -> 3.8 units target size)
+    const targetScale = maxDim > 0 ? 3.8 / maxDim : 0.018;
 
     return { clonedScene: scene, scale: targetScale };
   }, [gltf]);
 
-  // Gentle floating animation (no rotation on scroll, just subtle float up/down)
+  // Gentle floating animation (stationary stance, no scroll rotation)
   useFrame(({ clock }) => {
     if (groupRef.current) {
       groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
@@ -152,8 +151,8 @@ interface CustomCadModelLoader3DProps {
 export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
   customModelUrl,
 }) => {
-  // User's GLB model file: public/cad/homepage-cad.glb
-  const defaultUrl = "/cad/homepage-cad.glb";
+  // Path to user's ISS.glb file: public/cad/ISS.glb
+  const defaultUrl = "/cad/ISS.glb";
   const activeUrl = customModelUrl || defaultUrl;
 
   return (
