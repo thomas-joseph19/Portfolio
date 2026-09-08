@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { MediaItem } from "@/content/projects/_schema";
+import { getAssetPath } from "@/lib/assets";
 
 interface MediaPlaceholderProps {
   aspectRatio?: string;
@@ -16,8 +17,10 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
   item,
   className = "",
 }) => {
+  const [imageError, setImageError] = useState(false);
   const effectiveAspectRatio = item?.aspectRatio || aspectRatio || "16/9";
-  const hasMediaSrc = Boolean(item && item.src);
+  const mediaSrc = getAssetPath(item?.src || null);
+  const hasMediaSrc = Boolean(mediaSrc) && !imageError;
   const altText = item?.alt || label;
 
   return (
@@ -25,10 +28,10 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
       className={`relative w-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] transition-colors duration-200 ${className}`}
       style={{ aspectRatio: effectiveAspectRatio }}
     >
-      {hasMediaSrc && item?.src ? (
-        item.type === "video" ? (
+      {hasMediaSrc && mediaSrc ? (
+        item?.type === "video" ? (
           <video
-            src={item.src}
+            src={mediaSrc}
             aria-label={altText}
             controls
             className="h-full w-full object-cover"
@@ -36,8 +39,9 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
         ) : (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src={item.src}
+            src={mediaSrc}
             alt={altText}
+            onError={() => setImageError(true)}
             className="h-full w-full object-cover"
           />
         )
@@ -107,7 +111,7 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
       )}
 
       {item?.caption && (
-        <div className="absolute bottom-0 inset-x-0 bg-black/75 px-3 py-1.5 text-[11px] text-[var(--text-secondary)] backdrop-blur-xs">
+        <div className="absolute bottom-0 inset-x-0 bg-black/80 px-3 py-2 text-[11px] text-[var(--text-secondary)] backdrop-blur-md border-t border-[var(--border-subtle)]/50">
           {item.caption}
         </div>
       )}

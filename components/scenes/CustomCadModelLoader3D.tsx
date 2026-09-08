@@ -4,10 +4,13 @@ import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { getAssetPath } from "@/lib/assets";
+
+const modelUrl = getAssetPath("/projects/hpr-l1-rocket/rocket-model.glb");
 
 // --- USER'S ACTUAL GLB CAD MODEL COMPONENT ---
 const UserGltfRocketModel: React.FC<{ progress?: number }> = ({ progress = 0 }) => {
-  const { scene } = useGLTF("/projects/hpr-l1-rocket/rocket-model.glb");
+  const { scene } = useGLTF(modelUrl);
   const groupRef = useRef<THREE.Group>(null);
   const plumeRef = useRef<THREE.Group>(null);
 
@@ -187,4 +190,4 @@ export const CustomCadModelLoader3D: React.FC<{ progress?: number }> = ({ progre
   );
 };
 
-useGLTF.preload("/projects/hpr-l1-rocket/rocket-model.glb");
+useGLTF.preload(modelUrl);
