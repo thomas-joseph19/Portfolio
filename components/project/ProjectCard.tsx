@@ -13,7 +13,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
     <div className="group flex flex-col rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] overflow-hidden transition-all duration-300 hover:border-[var(--accent)] hover:shadow-lg hover:shadow-[var(--accent-glow)]">
       <div className="relative">
-        <MediaPlaceholder item={project.thumbnail} />
+        <MediaPlaceholder item={project.thumbnail} aspectRatio="3/2" showCaption={false} />
         <div className="absolute top-3 right-3 z-10">
           <StatusBadge status={project.status} />
         </div>

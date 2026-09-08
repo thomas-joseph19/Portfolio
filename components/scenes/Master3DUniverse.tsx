@@ -217,13 +217,13 @@ const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
 
   const handleScrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -290, behavior: "smooth" });
+      scrollRef.current.scrollBy({ left: -315, behavior: "smooth" });
     }
   };
 
   const handleScrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 290, behavior: "smooth" });
+      scrollRef.current.scrollBy({ left: 315, behavior: "smooth" });
     }
   };
 
@@ -232,7 +232,7 @@ const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
       <Html position={[0, 0, 0]} center distanceFactor={7}>
         <div
           style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
-          className="w-[880px] space-y-4 select-none font-sans transition-opacity duration-300"
+          className="w-[920px] space-y-4 select-none font-sans transition-opacity duration-300"
         >
           {/* Header Bar with Horizontal Carousel Controls */}
           <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-2.5 bg-[var(--bg-primary)]/90 p-3 rounded-[var(--radius-sm)] shadow-md">
@@ -271,11 +271,11 @@ const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
             {featuredProjects.map((project) => (
               <div
                 key={project.slug}
-                className="w-[275px] shrink-0 snap-start p-4 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl transition-all duration-300 hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-2xl hover:shadow-[var(--accent-glow)] flex flex-col justify-between group"
+                className="w-[295px] shrink-0 snap-start p-4 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl transition-all duration-300 hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-2xl hover:shadow-[var(--accent-glow)] flex flex-col justify-between group"
               >
                 <div className="space-y-2.5">
                   <div className="relative overflow-hidden rounded-[var(--radius-sm)]">
-                    <MediaPlaceholder item={project.thumbnail} aspectRatio="16/9" />
+                    <MediaPlaceholder item={project.thumbnail} aspectRatio="3/2" showCaption={false} />
                     <div className="absolute top-2 right-2 z-10">
                       <StatusBadge status={project.status} size="sm" />
                     </div>
