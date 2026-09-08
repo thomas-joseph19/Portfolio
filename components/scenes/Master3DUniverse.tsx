@@ -379,7 +379,7 @@ export const Master3DUniverse: React.FC = () => {
   const [targetProgress, setTargetProgress] = useState(0);
   const isCooldownRef = useRef(false);
 
-  // Exact 5% per Wheel Tick (5 scrolls = 25% = 1 Stage Transition!)
+  // Exact 12.5% per Wheel Tick (2 scrolls = 25% = 1 Stage Transition! Total 8 scrolls)
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     if (isCooldownRef.current) return;
@@ -391,10 +391,10 @@ export const Master3DUniverse: React.FC = () => {
     }, 120);
 
     const direction = Math.sign(e.deltaY);
-    // Move by exactly 0.05 (5%) per scroll tick
+    // Move by exactly 0.125 (12.5%) per scroll tick = 2 scrolls per stage!
     setTargetProgress((prev) => {
-      const next = prev + direction * 0.05;
-      return Math.max(0, Math.min(1, Math.round(next * 100) / 100));
+      const next = prev + direction * 0.125;
+      return Math.max(0, Math.min(1, Math.round(next * 1000) / 1000));
     });
   }, []);
 
@@ -415,8 +415,8 @@ export const Master3DUniverse: React.FC = () => {
       const direction = Math.sign(diff);
       touchStartRef.current = e.touches[0].clientY;
       setTargetProgress((prev) => {
-        const next = prev + direction * 0.05;
-        return Math.max(0, Math.min(1, Math.round(next * 100) / 100));
+        const next = prev + direction * 0.125;
+        return Math.max(0, Math.min(1, Math.round(next * 1000) / 1000));
       });
     }
   }, []);
@@ -457,29 +457,29 @@ export const Master3DUniverse: React.FC = () => {
         </Float>
       </Canvas>
 
-      {/* On-Screen Waypoint Jump Bar (5 Scrolls per Stage = 25% per Stage!) */}
+      {/* On-Screen Waypoint Jump Bar (2 Scrolls per Stage = 25% per Stage!) */}
       <div className="fixed top-20 right-6 z-40 flex flex-col gap-2 bg-[var(--bg-primary)]/90 p-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] backdrop-blur-md">
         <button onClick={() => jumpToProgress(0.0)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress <= 0.12 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
           01 // HERO (0 SCROLLS)
         </button>
         <button onClick={() => jumpToProgress(0.25)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.12 && targetProgress <= 0.38 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          02 // STATEMENT (5 SCROLLS)
+          02 // STATEMENT (2 SCROLLS)
         </button>
         <button onClick={() => jumpToProgress(0.50)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.38 && targetProgress <= 0.62 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          03 // PROFILE (10 SCROLLS)
+          03 // PROFILE (4 SCROLLS)
         </button>
         <button onClick={() => jumpToProgress(0.75)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.62 && targetProgress <= 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          04 // CAD ASSEMBLY (15 SCROLLS)
+          04 // CAD ASSEMBLY (6 SCROLLS)
         </button>
         <button onClick={() => jumpToProgress(1.00)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          05 // ARCHITECTURE (20 SCROLLS)
+          05 // ARCHITECTURE (8 SCROLLS)
         </button>
       </div>
 
       {/* Progress HUD Indicator: Shows Scroll Ticks & Exact Percentage */}
       <div className="fixed bottom-6 left-6 z-40 flex items-center gap-3 font-mono text-[11px] text-[var(--accent)] bg-[var(--bg-primary)]/90 px-3.5 py-2 rounded-[var(--radius-sm)] border border-[var(--border-accent)] backdrop-blur-md shadow-xl">
         <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-ping" />
-        <span>SCROLL TICKS: {Math.round(targetProgress * 20)} / 20 • ({Math.round(targetProgress * 100)}%)</span>
+        <span>SCROLL TICKS: {Math.round(targetProgress * 8)} / 8 • ({Math.round(targetProgress * 100)}%)</span>
       </div>
     </div>
   );
