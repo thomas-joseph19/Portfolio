@@ -11,7 +11,8 @@ export interface MediaItem {
   src: string | null;        // null => render AWAITING MEDIA placeholder
   cadModelUrl?: string | null; // URL path to .stl, .gltf, or .glb CAD model for interactive 3D rendering
   alt: string;
-  aspectRatio: string;       // e.g. "16/9", "4/3" — required even when src is null
+  aspectRatio: string;       // e.g. "16/9", "4/3", "4/5" — required even when src is null
+  objectFit?: "cover" | "contain"; // "contain" prevents cropping tall/portrait photos
   caption?: string;
 }
 

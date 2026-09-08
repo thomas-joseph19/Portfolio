@@ -23,6 +23,9 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
   const hasMediaSrc = Boolean(mediaSrc) && !imageError;
   const altText = item?.alt || label;
 
+  const isContain = item?.objectFit === "contain";
+  const objectFitClass = isContain ? "object-contain bg-[#0a0a0b]" : "object-cover";
+
   return (
     <div
       className={`relative w-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] transition-colors duration-200 ${className}`}
@@ -34,7 +37,7 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
             src={mediaSrc}
             aria-label={altText}
             controls
-            className="h-full w-full object-cover"
+            className={`h-full w-full ${objectFitClass}`}
           />
         ) : (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -42,7 +45,7 @@ export const MediaPlaceholder: React.FC<MediaPlaceholderProps> = ({
             src={mediaSrc}
             alt={altText}
             onError={() => setImageError(true)}
-            className="h-full w-full object-cover"
+            className={`h-full w-full ${objectFitClass}`}
           />
         )
       ) : (

@@ -19,14 +19,16 @@ export const hprL1RocketProject: Project = {
     type: "image",
     src: "/projects/hpr-l1-rocket/completed-rocket.jpg",
     alt: "Thomas Joseph next to the completed Level 1 High-Powered Rocket",
-    aspectRatio: "16/9",
+    aspectRatio: "4/5",
+    objectFit: "contain",
     caption: "Completed High-Powered Rocketry Level 1 Certification Rocket alongside Thomas Joseph.",
   },
   heroMedia: {
     type: "image",
     src: "/projects/hpr-l1-rocket/completed-rocket.jpg",
     alt: "Thomas Joseph with completed HPR Level 1 Certification Rocket",
-    aspectRatio: "16/9",
+    aspectRatio: "4/5",
+    objectFit: "contain",
     caption: "Fully painted and assembled HPR Level 1 Rocket prior to NAR/TRA certification launch.",
   },
   gallery: [
