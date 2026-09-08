@@ -24,7 +24,7 @@ export const ucfBoatDesignProject: Project = {
   featured: true,
   thumbnail: {
     type: "image",
-    src: "/projects/ucf-boat-design/final-boat.jpg",
+    src: "/projects/ucf-boat-design/final-boat.png",
     alt: "Final Autonomous Pontoon Boat Prototype",
     aspectRatio: "4/3",
     objectFit: "contain",
@@ -32,7 +32,7 @@ export const ucfBoatDesignProject: Project = {
   },
   heroMedia: {
     type: "image",
-    src: "/projects/ucf-boat-design/final-boat.jpg",
+    src: "/projects/ucf-boat-design/final-boat.png",
     alt: "Completed Pontoon Life Raft Prototype",
     aspectRatio: "16/9",
     objectFit: "contain",
@@ -41,7 +41,7 @@ export const ucfBoatDesignProject: Project = {
   gallery: [
     {
       type: "cad-render",
-      src: "/projects/ucf-boat-design/cad-model.jpg",
+      src: "/projects/ucf-boat-design/cad-model.png",
       alt: "3D CAD Model of Pontoon Boat in Onshape",
       aspectRatio: "16/9",
       objectFit: "contain",
@@ -61,7 +61,7 @@ export const ucfBoatDesignProject: Project = {
       media: [
         {
           type: "cad-render",
-          src: "/projects/ucf-boat-design/cad-model.jpg",
+          src: "/projects/ucf-boat-design/cad-model.png",
           alt: "3D CAD Assembly Model",
           aspectRatio: "16/9",
           objectFit: "contain",
