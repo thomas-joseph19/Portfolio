@@ -29,7 +29,7 @@ class CadErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState>
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    console.warn("CAD Model Loader error:", error, errorInfo);
+    console.warn("CAD Model Loader error caught safely:", error, errorInfo);
   }
 
   render() {
@@ -39,6 +39,103 @@ class CadErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState>
     return this.props.children;
   }
 }
+
+// --- HIGH-PRECISION TSX NATIVE 3D INTERNATIONAL SPACE STATION COMPONENT ---
+const ISSPure3DModel: React.FC = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  const dishRef = useRef<THREE.Group>(null);
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      // Gentle floating animation (stationary stance, subtle vertical float)
+      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
+    }
+    if (dishRef.current) {
+      dishRef.current.rotation.z = clock.getElapsedTime() * 0.4;
+    }
+  });
+
+  return (
+    <group ref={groupRef} scale={[0.95, 0.95, 0.95]}>
+      {/* Central Pressurized Core Modules (Zvezda / Destiny / Unity Nodes) */}
+      <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.75, 0.75, 4.0, 32]} />
+        <meshStandardMaterial color="#d69e2e" metalness={0.9} roughness={0.25} />
+      </mesh>
+
+      {/* Titanium Docking Hub Rings */}
+      {[-1.8, -0.6, 0.6, 1.8].map((x, idx) => (
+        <mesh key={idx} position={[x, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.85, 0.85, 0.35, 24]} />
+          <meshStandardMaterial color="#8a9ba8" metalness={0.95} roughness={0.15} />
+        </mesh>
+      ))}
+
+      {/* Main Integrated Truss Structure (S0 / P1 / S1 Truss Beams) */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[0.35, 8.2, 0.35]} />
+        <meshStandardMaterial color="#6fb3c2" metalness={0.9} wireframe />
+      </mesh>
+
+      {/* Dual Massive Solar Array Wings (Port & Starboard Arrays) */}
+      {[-3.8, 3.8].map((yPos, sideIdx) => (
+        <group key={sideIdx} position={[0, yPos, 0]}>
+          {/* Solar Panel Mounting Frame */}
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[5.2, 0.15, 0.1]} />
+            <meshStandardMaterial color="#2d3748" metalness={0.8} />
+          </mesh>
+
+          {/* Photovoltaic Panels (Upper & Lower arrays) */}
+          {[-2.0, -0.7, 0.7, 2.0].map((xPos, pIdx) => (
+            <group key={pIdx} position={[xPos, 0, 0]}>
+              <mesh position={[0, 0, 1.5]}>
+                <boxGeometry args={[1.1, 0.05, 2.8]} />
+                <meshStandardMaterial
+                  color="#1a365d"
+                  emissive="#1a365d"
+                  emissiveIntensity={0.4}
+                  metalness={0.9}
+                  roughness={0.1}
+                />
+              </mesh>
+              <mesh position={[0, 0, -1.5]}>
+                <boxGeometry args={[1.1, 0.05, 2.8]} />
+                <meshStandardMaterial
+                  color="#1a365d"
+                  emissive="#1a365d"
+                  emissiveIntensity={0.4}
+                  metalness={0.9}
+                  roughness={0.1}
+                />
+              </mesh>
+            </group>
+          ))}
+        </group>
+      ))}
+
+      {/* High-Gain Parabolic Communications Radar Dish */}
+      <group ref={dishRef} position={[0, 0, 2.0]}>
+        <mesh rotation={[Math.PI / 4, 0, 0]}>
+          <cylinderGeometry args={[1.0, 0.1, 0.35, 24]} />
+          <meshStandardMaterial color="#f2f2f0" metalness={0.9} wireframe />
+        </mesh>
+        <mesh position={[0, 0.45, 0]}>
+          <sphereGeometry args={[0.18, 16, 16]} />
+          <meshStandardMaterial color="#6fb3c2" emissive="#6fb3c2" emissiveIntensity={0.8} />
+        </mesh>
+      </group>
+
+      {/* Ion Thrusters (Glowing Cyan Plasma) */}
+      {[-0.9, 0.9].map((zPos, idx) => (
+        <mesh key={idx} position={[-2.2, 0, zPos]} rotation={[0, Math.PI / 2, 0]}>
+          <coneGeometry args={[0.4, 0.8, 16]} />
+          <meshStandardMaterial color="#4fd1c5" emissive="#4fd1c5" emissiveIntensity={1.2} />
+        </mesh>
+      ))}
+    </group>
+  );
+};
 
 interface ModelProps {
   url: string;
@@ -64,34 +161,42 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
     loader.setDRACOLoader(dracoLoader);
   });
 
-  // Clone scene & compute bounding box to auto-center & scale user ISS.glb CAD model
-  const { clonedScene, scale } = useMemo(() => {
-    if (!gltf || !gltf.scene) return { clonedScene: null, scale: 1 };
-    const scene = gltf.scene.clone(true);
+  // Extract the ISS mesh directly (ignoring camera node offset) and center/scale it
+  const { issMeshObject, scale } = useMemo(() => {
+    if (!gltf || !gltf.scene) return { issMeshObject: null, scale: 1 };
 
-    const box = new THREE.Box3();
-    let validCount = 0;
-
-    scene.traverse((child: any) => {
-      if (child.isMesh && child.geometry) {
-        // Ensure geometry bounding box is computed
-        child.geometry.computeBoundingBox();
-
-        // Position attribute filtering to ignore outlier construction points (> 1000 units)
-        const posAttr = child.geometry.attributes.position;
-        if (posAttr) {
-          const v = new THREE.Vector3();
-          for (let i = 0; i < posAttr.count; i++) {
-            v.fromBufferAttribute(posAttr, i);
-            if (Math.abs(v.x) < 500 && Math.abs(v.y) < 500 && Math.abs(v.z) < 500) {
-              const worldV = v.clone().applyMatrix4(child.matrixWorld);
-              box.expandByPoint(worldV);
-              validCount++;
-            }
-          }
+    // Find ISS mesh in GLTF scene, ignoring camera nodes
+    let issObject: THREE.Object3D | null = null;
+    gltf.scene.traverse((child) => {
+      if (child.name === "ISS" || (child as THREE.Mesh).isMesh) {
+        if (!issObject) {
+          issObject = child.clone(true);
         }
+      }
+    });
 
-        // Enhance material visibility & contrast for dark CAD parts
+    if (!issObject) {
+      issObject = gltf.scene.clone(true);
+    }
+
+    // Reset local matrix transforms on root object
+    issObject.position.set(0, 0, 0);
+    issObject.rotation.set(0, 0, 0);
+    issObject.scale.set(1, 1, 1);
+
+    // Compute bounding box over ISS geometry
+    const box = new THREE.Box3().setFromObject(issObject);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    box.getCenter(center);
+    box.getSize(size);
+
+    // Center geometry at [0, 0, 0]
+    issObject.position.sub(center);
+
+    // Enhance materials
+    issObject.traverse((child: any) => {
+      if (child.isMesh && child.material) {
         child.material.side = THREE.DoubleSide;
         if (child.material.color) {
           if (
@@ -99,46 +204,33 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
             child.material.color.g < 0.08 &&
             child.material.color.b < 0.08
           ) {
-            child.material.color.set("#64748b");
+            child.material.color.set("#5a6578");
           }
         }
       }
     });
 
-    const center = new THREE.Vector3();
-    const size = new THREE.Vector3();
-
-    if (validCount > 0 && !box.isEmpty()) {
-      box.getCenter(center);
-      box.getSize(size);
-    } else {
-      box.setFromObject(scene);
-      box.getCenter(center);
-      box.getSize(size);
-    }
-
-    // Center model at pivot [0, 0, 0]
-    scene.position.sub(center);
-
     const maxDim = Math.max(size.x, size.y, size.z);
-    // Precise scale calculation for ISS.glb (~190 units physical dimension -> 3.8 units target size)
-    const targetScale = maxDim > 0 ? 3.8 / maxDim : 0.018;
+    // Explicit scale factor for ISS mesh
+    const targetScale = maxDim > 0 && maxDim < 10000 ? 3.5 / maxDim : 0.025;
 
-    return { clonedScene: scene, scale: targetScale };
+    return { issMeshObject: issObject, scale: targetScale };
   }, [gltf]);
 
-  // Gentle floating animation (stationary stance, no scroll rotation)
+  // Gentle floating animation (stationary stance, subtle vertical float)
   useFrame(({ clock }) => {
     if (groupRef.current) {
       groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 1.2) * 0.15;
     }
   });
 
-  if (!clonedScene) return null;
+  if (!issMeshObject) {
+    return <ISSPure3DModel />;
+  }
 
   return (
     <group ref={groupRef} scale={[scale, scale, scale]}>
-      <primitive object={clonedScene} />
+      <primitive object={issMeshObject} />
     </group>
   );
 };
@@ -156,8 +248,8 @@ export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
   const activeUrl = customModelUrl || defaultUrl;
 
   return (
-    <CadErrorBoundary fallback={null}>
-      <Suspense fallback={null}>
+    <CadErrorBoundary fallback={<ISSPure3DModel />}>
+      <Suspense fallback={<ISSPure3DModel />}>
         <CadModelInner url={activeUrl} />
       </Suspense>
     </CadErrorBoundary>
