@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <body className="min-h-full flex flex-col font-sans bg-[var(--bg-primary)] text-[var(--text-primary)] selection:bg-[var(--accent)] selection:text-[var(--bg-primary)]">
+    <html lang="en" className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <body className="min-h-screen flex flex-col font-sans bg-[var(--bg-primary)] text-[var(--text-primary)] selection:bg-[var(--accent)] selection:text-[var(--bg-primary)]">
         <SmoothScrollProvider>
           <Nav />
           <main id="main-content" className="flex-1 w-full relative">

@@ -35,7 +35,7 @@ export default function ResumePage() {
         <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-2">
           <div className="text-xl font-bold text-[var(--text-primary)] font-heading">THOMAS JOSEPH</div>
           <div className="text-xs text-[var(--accent)] flex flex-wrap gap-4 pt-1">
-            <span>LOCATION: Tampa, FL</span>
+            <span>LOCATION: Orlando, FL</span>
             <span>PHONE: 813-451-7308</span>
             <span>EMAIL: thomas.joseph19@outlook.com</span>
             <a

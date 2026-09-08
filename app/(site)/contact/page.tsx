@@ -96,7 +96,7 @@ export default function ContactPage() {
       <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[var(--text-secondary)]">
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] animate-pulse" />
-          <span>LOCATION: TAMPA, FL • UCF MAY 2029</span>
+          <span>LOCATION: ORLANDO, FL • UCF MAY 2029</span>
         </div>
         <div className="text-[var(--accent)] font-semibold">
           STATUS: OPEN FOR ENGINEERING INTERNSHIPS & OPPORTUNITIES

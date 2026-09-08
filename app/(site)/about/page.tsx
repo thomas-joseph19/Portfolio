@@ -47,7 +47,7 @@ export default function AboutPage() {
             THOMAS JOSEPH // FUTURE ENGINEER
           </div>
           <div className="text-xs text-[var(--text-secondary)] font-mono">
-            TAMPA, FL • UNIVERSITY OF CENTRAL FLORIDA
+            ORLANDO, FL • UNIVERSITY OF CENTRAL FLORIDA
           </div>
         </div>
       </div>
