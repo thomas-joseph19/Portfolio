@@ -13,28 +13,28 @@ export const OrbitalRocketCad3D: React.FC<{ progress?: number }> = ({ progress =
     const t = clock.getElapsedTime();
 
     if (groupRef.current) {
-      // Rocket launch kinematics: as scroll progress increases past Stage 04 (0.60 -> 1.00), rocket launches upward!
-      const launchProgress = Math.max(0, (progress - 0.60) / 0.35);
-      const launchAltitude = Math.pow(launchProgress, 1.8) * 22; // Accelerating takeoff trajectory
+      // Rocket launch kinematics: as user approaches Projects stage (0.65 -> 1.00), rocket ignites and blasts off!
+      const launchProgress = Math.max(0, (progress - 0.68) / 0.32);
+      const launchAltitude = Math.pow(launchProgress, 1.8) * 28; // Accelerating takeoff trajectory
 
       // Base hovering float + takeoff vertical displacement
       const baseFloat = Math.sin(t * 1.5) * 0.12;
       groupRef.current.position.y = baseFloat + launchAltitude;
 
-      // Slight aerodynamic roll & pitch during ascent
+      // Aerodynamic roll & pitch during ascent
       groupRef.current.rotation.y = t * 0.3;
       groupRef.current.rotation.z = Math.sin(t * 2.0) * 0.02 * (1 + launchProgress);
     }
 
     if (plumeRef.current) {
       // Engine plume flicker & expansion during launch
-      const isIgnited = progress > 0.55;
+      const isIgnited = progress > 0.62;
       const flicker = 1.0 + Math.sin(t * 30) * 0.15;
-      plumeRef.current.scale.set(flicker, isIgnited ? 1.0 + Math.min(2.0, (progress - 0.55) * 4) : 0.2, flicker);
+      plumeRef.current.scale.set(flicker, isIgnited ? 1.0 + Math.min(2.5, (progress - 0.62) * 5) : 0.2, flicker);
     }
   });
 
-  const isEngineOn = progress > 0.55;
+  const isEngineOn = progress > 0.62;
 
   return (
     <group ref={groupRef} scale={[0.65, 0.65, 0.65]}>
