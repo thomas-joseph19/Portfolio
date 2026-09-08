@@ -48,9 +48,10 @@ interface ModelProps {
 const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
   const groupRef = useRef<THREE.Group>(null);
 
-  // Next.js basePath support for GitHub Pages static export (/Portfolio)
-  const isGithubActions = process.env.NEXT_PUBLIC_GITHUB_ACTIONS === "true";
-  const basePath = isGithubActions ? "/Portfolio" : "";
+  // Detect GitHub Pages /Portfolio path
+  const isGhPages =
+    typeof window !== "undefined" && window.location.pathname.startsWith("/Portfolio");
+  const basePath = isGhPages ? "/Portfolio" : "";
 
   // Format URL properly
   const resolvedUrl = url.startsWith("blob:")
