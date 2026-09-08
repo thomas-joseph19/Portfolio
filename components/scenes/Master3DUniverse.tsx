@@ -223,7 +223,7 @@ const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
           {/* Header Bar */}
           <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 bg-[var(--bg-primary)]/90 p-3 rounded-[var(--radius-sm)]">
             <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
-              SYSTEM_TERMINAL // PROJECT_ARCHITECTURE & PATHWAYS
+              SYSTEM_TERMINAL // FEATURED PROJECTS & PATHWAYS
             </div>
             <div className="mono-label text-xs text-[var(--text-muted)]">
               STAGE_05 // FINAL_WAYPOINT
@@ -247,7 +247,7 @@ const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
           {/* Explore Architecture Action Card */}
           <div className="text-center space-y-4 bg-[var(--surface-graphite)]/95 p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] backdrop-blur-md shadow-2xl">
             <h2 className="text-3xl font-extrabold text-[var(--text-primary)] font-heading">
-              EXPLORE THE SYSTEM ARCHITECTURE
+              EXPLORE THE PROJECTS ARCHIVE
             </h2>
             <div className="flex justify-center gap-4 pt-2">
               <Button href="/projects" variant="primary" size="md">
@@ -366,7 +366,7 @@ export const Master3DUniverse: React.FC = () => {
           04 // ROCKET TAKEOFF
         </button>
         <button onClick={() => jumpToProgress(1.00)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          05 // ARCHITECTURE
+          05 // PROJECTS
         </button>
       </div>
 
