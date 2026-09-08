@@ -161,41 +161,40 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
     loader.setDRACOLoader(dracoLoader);
   });
 
-  // Extract the ISS mesh directly (ignoring camera node offset) and center/scale it
+  // Extract the complete ISS assembly (ignoring camera nodes)
   const { issMeshObject, scale } = useMemo(() => {
     if (!gltf || !gltf.scene) return { issMeshObject: null, scale: 1 };
 
-    // Find ISS mesh in GLTF scene, ignoring camera nodes
-    let issObject: THREE.Object3D | null = null;
-    gltf.scene.traverse((child) => {
-      if (child.name === "ISS" || (child as THREE.Mesh).isMesh) {
-        if (!issObject) {
-          issObject = child.clone(true);
-        }
+    // Create container for full ISS assembly
+    const fullAssembly = new THREE.Group();
+
+    gltf.scene.children.forEach((child) => {
+      // Exclude camera nodes to prevent scene offset
+      if (child.name !== "current camera" && !(child as THREE.Camera).isCamera) {
+        fullAssembly.add(child.clone(true));
       }
     });
 
-    if (!issObject) {
-      issObject = gltf.scene.clone(true);
+    if (fullAssembly.children.length === 0) {
+      fullAssembly.add(gltf.scene.clone(true));
     }
 
-    // Reset local matrix transforms on root object
-    issObject.position.set(0, 0, 0);
-    issObject.rotation.set(0, 0, 0);
-    issObject.scale.set(1, 1, 1);
+    // Reset root transforms
+    fullAssembly.position.set(0, 0, 0);
+    fullAssembly.rotation.set(0, 0, 0);
 
-    // Compute bounding box over ISS geometry
-    const box = new THREE.Box3().setFromObject(issObject);
+    // Compute bounding box over entire ISS assembly
+    const box = new THREE.Box3().setFromObject(fullAssembly);
     const center = new THREE.Vector3();
     const size = new THREE.Vector3();
     box.getCenter(center);
     box.getSize(size);
 
-    // Center geometry at [0, 0, 0]
-    issObject.position.sub(center);
+    // Center geometry at pivot [0, 0, 0]
+    fullAssembly.position.sub(center);
 
-    // Enhance materials
-    issObject.traverse((child: any) => {
+    // Enhance materials for all sub-meshes
+    fullAssembly.traverse((child: any) => {
       if (child.isMesh && child.material) {
         child.material.side = THREE.DoubleSide;
         if (child.material.color) {
@@ -211,10 +210,10 @@ const CadModelInner: React.FC<ModelProps> = ({ url }) => {
     });
 
     const maxDim = Math.max(size.x, size.y, size.z);
-    // Explicit scale factor for ISS mesh
-    const targetScale = maxDim > 0 && maxDim < 10000 ? 3.5 / maxDim : 0.025;
+    // Explicit scale factor for full ISS assembly (~190 units physical size -> 3.5 units target size)
+    const targetScale = maxDim > 0 ? 3.5 / maxDim : 0.02;
 
-    return { issMeshObject: issObject, scale: targetScale };
+    return { issMeshObject: fullAssembly, scale: targetScale };
   }, [gltf]);
 
   // Gentle floating animation (stationary stance, subtle vertical float)

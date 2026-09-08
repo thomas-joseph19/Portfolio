@@ -82,15 +82,8 @@ const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
 
   return (
     <group position={[0, 0.2, 8]}>
-      <group ref={meshRef} position={[0, 0, -2]}>
-        <mesh>
-          <cylinderGeometry args={[3.0, 3.0, 0.25, 32]} />
-          <meshStandardMaterial color="#1c1c1f" metalness={0.9} wireframe transparent opacity={opacity * 0.7} />
-        </mesh>
-        <mesh>
-          <torusGeometry args={[3.6, 0.1, 16, 48]} />
-          <meshStandardMaterial color="#6fb3c2" emissive="#6fb3c2" emissiveIntensity={0.5} transparent opacity={opacity} />
-        </mesh>
+      <group position={[0, -0.2, -2.5]}>
+        <CustomCadModelLoader3D progress={progress} />
       </group>
 
       <Html position={[0, 0, 0]} center distanceFactor={7}>
