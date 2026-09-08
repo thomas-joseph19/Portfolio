@@ -16,8 +16,9 @@ export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
 }) => {
   const groupRef = useRef<THREE.Group>(null);
 
-  // Default demo GLTF path
-  const defaultUrl = "/models/custom-cad.glb";
+  // PERMANENT HOMEPAGE 3D CAD MODEL PATH
+  // Drop your model into: public/cad/homepage-cad.glb
+  const defaultUrl = "/cad/homepage-cad.glb";
   const activeUrl = customModelUrl || defaultUrl;
 
   let gltfModel: any = null;
