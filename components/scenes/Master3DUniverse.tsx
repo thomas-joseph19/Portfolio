@@ -342,6 +342,10 @@ export const Master3DUniverse: React.FC = () => {
           <HeroGearNode3D progress={targetProgress} />
           <LinkageNode3D progress={targetProgress} />
           <ProfileNode3D progress={targetProgress} />
+          {/* Prominent 3D Aerospace Orbital Rocket in central flight path */}
+          <group position={[0, -0.5, -6]}>
+            <CustomCadModelLoader3D progress={targetProgress} />
+          </group>
           <ExplodedAssemblyNode3D progress={targetProgress} />
           <SystemTerminalNode3D progress={targetProgress} />
         </Float>
