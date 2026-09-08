@@ -274,8 +274,11 @@ const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
                 className="w-[275px] shrink-0 snap-start p-4 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl transition-all duration-300 hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-2xl hover:shadow-[var(--accent-glow)] flex flex-col justify-between group"
               >
                 <div className="space-y-2.5">
-                  <div className="overflow-hidden rounded-[var(--radius-sm)]">
+                  <div className="relative overflow-hidden rounded-[var(--radius-sm)]">
                     <MediaPlaceholder item={project.thumbnail} aspectRatio="16/9" />
+                    <div className="absolute top-2 right-2 z-10">
+                      <StatusBadge status={project.status} size="sm" />
+                    </div>
                   </div>
                   <div className="text-sm font-bold text-[var(--text-primary)] font-heading group-hover:text-[var(--accent)] transition-colors line-clamp-1">
                     {project.title || "[AWAITING TITLE]"}
