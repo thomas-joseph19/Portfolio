@@ -1,26 +1,29 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 interface CustomCadModelLoader3DProps {
-  url?: string;
+  customModelUrl?: string | null;
   progress?: number;
 }
 
 export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
-  url = "/models/custom-cad.glb",
+  customModelUrl,
   progress = 0,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
 
-  // Try loading GLTF / GLB model if available
+  // Default demo GLTF path
+  const defaultUrl = "/models/custom-cad.glb";
+  const activeUrl = customModelUrl || defaultUrl;
+
   let gltfModel: any = null;
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    gltfModel = useGLTF(url);
+    gltfModel = useGLTF(activeUrl);
   } catch {
     gltfModel = null;
   }
@@ -33,12 +36,12 @@ export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
   });
 
   if (!gltfModel || !gltfModel.scene) {
-    return null; // Fallback to procedural 3D mechanical system when no custom file is uploaded
+    return null; // Fallback to procedural 3D wireframe assembly when no GLTF file is provided
   }
 
   return (
     <group ref={groupRef}>
-      <primitive object={gltfModel.scene} scale={1.5} />
+      <primitive object={gltfModel.scene} scale={1.8} />
     </group>
   );
 };

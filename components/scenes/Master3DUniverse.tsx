@@ -220,6 +220,8 @@ const ProfileNode3D: React.FC<{ progress: number }> = ({ progress }) => {
 // --- NODE 4: EXPLODED PLANETARY CAD ASSEMBLY (X = -5, Z = -10, Progress 0.75) ---
 const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const groupRef = useRef<THREE.Group>(null);
+  const [userModelUrl, setUserModelUrl] = useState<string | null>(null);
+  const [modelName, setModelName] = useState<string | null>(null);
   const explode = Math.sin(progress * Math.PI * 4) * 1.5;
 
   useFrame(() => {
@@ -228,30 +230,87 @@ const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) =>
     }
   });
 
+  const distFromCam = Math.abs(progress - 0.75);
+  const opacity = Math.max(0, 1 - distFromCam * 4.5);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const blobUrl = URL.createObjectURL(file);
+      setUserModelUrl(blobUrl);
+      setModelName(file.name);
+    }
+  };
+
   return (
     <group position={[-5, 0.2, -10]}>
-      <CustomCadModelLoader3D progress={progress} />
+      <CustomCadModelLoader3D customModelUrl={userModelUrl} progress={progress} />
 
-      <group ref={groupRef}>
-        <mesh position={[0, 1 + explode, 0]}>
-          <cylinderGeometry args={[2.0, 2.0, 0.2, 24]} />
-          <meshStandardMaterial color="#6fb3c2" metalness={0.9} wireframe />
-        </mesh>
-        <mesh position={[0, 0, 0]}>
-          <cylinderGeometry args={[0.7, 0.7, 0.5, 16]} />
-          <meshStandardMaterial color="#6fb3c2" emissive="#6fb3c2" emissiveIntensity={0.7} />
-        </mesh>
-        {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((ang, idx) => (
-          <mesh key={idx} position={[Math.cos(ang) * (1.2 + explode), 0, Math.sin(ang) * (1.2 + explode)]}>
-            <cylinderGeometry args={[0.5, 0.5, 0.4, 12]} />
-            <meshStandardMaterial color="#f2f2f0" metalness={0.8} />
+      {!userModelUrl && (
+        <group ref={groupRef}>
+          <mesh position={[0, 1 + explode, 0]}>
+            <cylinderGeometry args={[2.0, 2.0, 0.2, 24]} />
+            <meshStandardMaterial color="#6fb3c2" metalness={0.9} wireframe />
           </mesh>
-        ))}
-        <mesh position={[0, -1 - explode, 0]}>
-          <cylinderGeometry args={[2.2, 2.2, 0.2, 24]} />
-          <meshStandardMaterial color="#1c1c1f" metalness={0.8} wireframe />
-        </mesh>
-      </group>
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.7, 0.7, 0.5, 16]} />
+            <meshStandardMaterial color="#6fb3c2" emissive="#6fb3c2" emissiveIntensity={0.7} />
+          </mesh>
+          {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((ang, idx) => (
+            <mesh key={idx} position={[Math.cos(ang) * (1.2 + explode), 0, Math.sin(ang) * (1.2 + explode)]}>
+              <cylinderGeometry args={[0.5, 0.5, 0.4, 12]} />
+              <meshStandardMaterial color="#f2f2f0" metalness={0.8} />
+            </mesh>
+          ))}
+          <mesh position={[0, -1 - explode, 0]}>
+            <cylinderGeometry args={[2.2, 2.2, 0.2, 24]} />
+            <meshStandardMaterial color="#1c1c1f" metalness={0.8} wireframe />
+          </mesh>
+        </group>
+      )}
+
+      <Html position={[0, 0, 0]} center distanceFactor={7}>
+        <div
+          style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
+          className="w-[640px] text-center space-y-4 select-none font-sans transition-opacity duration-300"
+        >
+          <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
+            KINEMATICS // STAGE_04 // CAD_MODEL_PORT
+          </div>
+
+          <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-4 shadow-2xl">
+            <h3 className="text-2xl font-bold text-[var(--text-primary)] font-heading">
+              {modelName ? `ACTIVE MODEL: ${modelName}` : "EXPLODED CAD ASSEMBLY"}
+            </h3>
+            <p className="text-sm text-[var(--text-secondary)]">
+              Upload your own 3D CAD model file (.gltf / .glb / .stl) to render it directly in the background space!
+            </p>
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <label className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--accent)] text-[var(--bg-primary)] font-mono text-xs font-bold cursor-pointer hover:bg-[var(--accent-hover)] transition-colors shadow-md">
+                <span>⚡ LOAD CUSTOM 3D MODEL</span>
+                <input
+                  type="file"
+                  accept=".gltf,.glb,.stl"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+              {userModelUrl && (
+                <button
+                  onClick={() => {
+                    setUserModelUrl(null);
+                    setModelName(null);
+                  }}
+                  className="px-3 py-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-mono text-xs hover:text-[var(--text-primary)] transition-colors"
+                >
+                  RESET TO DEFAULT
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </Html>
     </group>
   );
 };
