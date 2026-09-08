@@ -219,33 +219,10 @@ const ProfileNode3D: React.FC<{ progress: number }> = ({ progress }) => {
 
 // --- NODE 4: 3D CAD KINEMATIC MODEL ASSEMBLY (X = -5, Z = -10, Progress 0.75) ---
 const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) => {
-  const distFromCam = Math.abs(progress - 0.75);
-  const opacity = Math.max(0, 1 - distFromCam * 4.5);
-
   return (
     <group position={[-5, 0.2, -10]}>
-      {/* Permanent 3D CAD Model (public/cad/homepage-cad.glb) */}
+      {/* 3D Space Station / Satellite CAD Assembly */}
       <CustomCadModelLoader3D progress={progress} />
-
-      <Html position={[0, 0, 0]} center distanceFactor={7}>
-        <div
-          style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
-          className="w-[640px] text-center space-y-4 select-none font-sans transition-opacity duration-300"
-        >
-          <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
-            KINEMATICS // STAGE_04 // 3D_CAD_ASSEMBLY
-          </div>
-
-          <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-2xl">
-            <h3 className="text-2xl font-bold text-[var(--text-primary)] font-heading">
-              MECHANICAL CAD ASSEMBLY
-            </h3>
-            <p className="text-sm text-[var(--text-secondary)]">
-              Interactive 3D mechanical CAD model with real-time kinematic rotation and materials.
-            </p>
-          </div>
-        </div>
-      </Html>
     </group>
   );
 };
