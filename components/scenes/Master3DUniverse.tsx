@@ -12,26 +12,25 @@ import { MediaPlaceholder } from "@/components/media/MediaPlaceholder";
 import { CustomCadModelLoader3D } from "./CustomCadModelLoader3D";
 
 // --- 3D CATMULL-ROM CONTINUOUS CAMERA CURVE PATH ---
+// 5 Stage Nodes: 0.00 (Hero) -> 0.25 (Statement) -> 0.50 (Profile) -> 0.75 (CAD Assembly) -> 1.00 (System Terminal)
 const cameraPosCurve = new THREE.CatmullRomCurve3([
-  new THREE.Vector3(0, 0.2, 12),    // 0.00: Step 0 - Hero (Name)
-  new THREE.Vector3(5, 0.2, 6),     // 0.20: Step 1 - Statement (Linkage)
-  new THREE.Vector3(0, 0.2, 0),      // 0.40: Step 2 - Profile HUD
-  new THREE.Vector3(-5, 0.2, -6),   // 0.60: Step 3 - Exploded Assembly
-  new THREE.Vector3(0, 0.2, -12),   // 0.80: Step 4 - Projects Matrix
-  new THREE.Vector3(0, 0.2, -18),   // 1.00: Step 5 - Continuation Terminal
+  new THREE.Vector3(0, 0.2, 12),    // 0.00 (0 scrolls): Hero / Name
+  new THREE.Vector3(5, 0.2, 6),     // 0.25 (5 scrolls): Statement / Linkage
+  new THREE.Vector3(0, 0.2, 0),      // 0.50 (10 scrolls): Profile HUD
+  new THREE.Vector3(-5, 0.2, -6),   // 0.75 (15 scrolls): Exploded CAD Assembly
+  new THREE.Vector3(0, 0.2, -18),   // 1.00 (20 scrolls): System Terminal / Architecture
 ]);
 
 const cameraLookCurve = new THREE.CatmullRomCurve3([
   new THREE.Vector3(0, 0.2, 8),     // 0.00: Look at Hero
-  new THREE.Vector3(5, 0.2, 2),     // 0.20: Look at Statement
-  new THREE.Vector3(0, 0.2, -4),    // 0.40: Look at Profile
-  new THREE.Vector3(-5, 0.2, -10),  // 0.60: Look at Exploded Assembly
-  new THREE.Vector3(0, 0.2, -16),   // 0.80: Look at Projects
-  new THREE.Vector3(0, 0.2, -22),   // 1.00: Look at Terminal
+  new THREE.Vector3(5, 0.2, 2),     // 0.25: Look at Statement
+  new THREE.Vector3(0, 0.2, -4),    // 0.50: Look at Profile
+  new THREE.Vector3(-5, 0.2, -10),  // 0.75: Look at Exploded Assembly
+  new THREE.Vector3(0, 0.2, -22),   // 1.00: Look at System Terminal / Architecture
 ]);
 
 interface CameraFlightProps {
-  targetProgress: number; // 0.0 -> 1.0 target progress
+  targetProgress: number;
 }
 
 const CameraFlightController: React.FC<CameraFlightProps> = ({ targetProgress }) => {
@@ -39,11 +38,11 @@ const CameraFlightController: React.FC<CameraFlightProps> = ({ targetProgress })
   const currentProgress = useRef(0);
 
   useFrame(() => {
-    // Smooth camera damping physics (lerp)
+    // Smooth Damping Physics to target step
     currentProgress.current = THREE.MathUtils.lerp(
       currentProgress.current,
       targetProgress,
-      0.08 // Smooth camera flight speed between steps
+      0.09
     );
 
     const p = Math.max(0, Math.min(1, currentProgress.current));
@@ -62,13 +61,13 @@ const CameraFlightController: React.FC<CameraFlightProps> = ({ targetProgress })
 const InfiniteCadGrid: React.FC = () => {
   return (
     <gridHelper
-      args={[100, 100, "#6fb3c2", "#2a2a2e"]}
+      args={[120, 120, "#6fb3c2", "#2a2a2e"]}
       position={[0, -3.2, -6]}
     />
   );
 };
 
-// --- NODE 1: HERO / NAME NODE (Step 0: progress = 0.0) ---
+// --- NODE 1: HERO / NAME NODE (Z = 8, Progress 0.00) ---
 const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const meshRef = useRef<THREE.Group>(null);
 
@@ -78,8 +77,8 @@ const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
     }
   });
 
-  const distFromNode = Math.abs(progress - 0.0);
-  const opacity = Math.max(0, 1 - distFromNode * 4);
+  const distFromCam = Math.abs(progress - 0.0);
+  const opacity = Math.max(0, 1 - distFromCam * 4.5);
 
   return (
     <group position={[0, 0.2, 8]}>
@@ -127,7 +126,7 @@ const HeroGearNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
-// --- NODE 2: STATEMENT LINKAGE NODE (Step 1: progress = 0.2) ---
+// --- NODE 2: STATEMENT LINKAGE NODE (X = 5, Z = 2, Progress 0.25) ---
 const LinkageNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const armRef = useRef<THREE.Group>(null);
 
@@ -137,8 +136,8 @@ const LinkageNode3D: React.FC<{ progress: number }> = ({ progress }) => {
     }
   });
 
-  const distFromNode = Math.abs(progress - 0.2);
-  const opacity = Math.max(0, 1 - distFromNode * 4);
+  const distFromCam = Math.abs(progress - 0.25);
+  const opacity = Math.max(0, 1 - distFromCam * 4.5);
 
   return (
     <group position={[5, 0.2, 2]}>
@@ -170,10 +169,10 @@ const LinkageNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
-// --- NODE 3: PROFILE HUD NODE (Step 2: progress = 0.4) ---
+// --- NODE 3: PROFILE HUD NODE (Z = -4, Progress 0.50) ---
 const ProfileNode3D: React.FC<{ progress: number }> = ({ progress }) => {
-  const distFromNode = Math.abs(progress - 0.4);
-  const opacity = Math.max(0, 1 - distFromNode * 4);
+  const distFromCam = Math.abs(progress - 0.50);
+  const opacity = Math.max(0, 1 - distFromCam * 4.5);
 
   return (
     <group position={[0, 0.2, -4]}>
@@ -218,7 +217,7 @@ const ProfileNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
-// --- NODE 4: EXPLODED PLANETARY CAD ASSEMBLY (Step 3: progress = 0.6) ---
+// --- NODE 4: EXPLODED PLANETARY CAD ASSEMBLY (X = -5, Z = -10, Progress 0.75) ---
 const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const groupRef = useRef<THREE.Group>(null);
   const explode = Math.sin(progress * Math.PI * 4) * 1.5;
@@ -257,31 +256,33 @@ const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) =>
   );
 };
 
-// --- NODE 5: FEATURED PROJECTS (Step 4: progress = 0.8) ---
-const ProjectsNode3D: React.FC<{ progress: number }> = ({ progress }) => {
+// --- NODE 5: SYSTEM TERMINAL / ARCHITECTURE CONTINUATION (Z = -22, Progress 1.00) ---
+const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const featuredProjects = getFeaturedProjects();
-  const distFromNode = Math.abs(progress - 0.8);
-  const opacity = Math.max(0, 1 - distFromNode * 4);
+  // Fully visible when progress >= 0.85 (5 scrolls from stage 4 to stage 5!)
+  const opacity = Math.min(1, Math.max(0, (progress - 0.75) / 0.20));
 
   return (
-    <group position={[0, 0.2, -16]}>
+    <group position={[0, 0.2, -22]}>
       <Html position={[0, 0, 0]} center distanceFactor={7}>
         <div
           style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
-          className="w-[860px] space-y-6 select-none font-sans transition-opacity duration-300"
+          className="w-[880px] space-y-6 select-none font-sans transition-opacity duration-300"
         >
+          {/* Header Bar */}
           <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 bg-[var(--bg-primary)]/90 p-3 rounded-[var(--radius-sm)]">
             <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
-              FEATURED_PROJECTS // NODE_05
+              SYSTEM_TERMINAL // PROJECT_ARCHITECTURE & PATHWAYS
             </div>
-            <Button href="/projects" variant="outline" size="sm">
-              VIEW ARCHIVE →
-            </Button>
+            <div className="mono-label text-xs text-[var(--text-muted)]">
+              STAGE_05 // FINAL_WAYPOINT
+            </div>
           </div>
 
+          {/* Featured Projects Showcase */}
           <div className="grid grid-cols-3 gap-4">
             {featuredProjects.map((project) => (
-              <div key={project.slug} className="p-5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl">
+              <div key={project.slug} className="p-4 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-xl">
                 <MediaPlaceholder item={project.thumbnail} />
                 <div className="text-base font-bold text-[var(--text-primary)] font-heading">{project.title || "[AWAITING TITLE]"}</div>
                 <div className="text-xs text-[var(--text-secondary)] line-clamp-2">{project.shortDescription}</div>
@@ -291,41 +292,23 @@ const ProjectsNode3D: React.FC<{ progress: number }> = ({ progress }) => {
               </div>
             ))}
           </div>
-        </div>
-      </Html>
-    </group>
-  );
-};
 
-// --- NODE 6: CONTINUATION / TERMINAL (Step 5: progress = 1.0) ---
-const ContinuationNode3D: React.FC<{ progress: number }> = ({ progress }) => {
-  // Full visibility at progress = 1.0 (Step 5)
-  const distFromNode = Math.abs(progress - 1.0);
-  const opacity = Math.max(0, 1 - distFromNode * 3.5);
-
-  return (
-    <group position={[0, 0.2, -22]}>
-      <Html position={[0, 0, 0]} center distanceFactor={7}>
-        <div
-          style={{ opacity, pointerEvents: opacity > 0.3 ? "auto" : "none" }}
-          className="w-[680px] text-center space-y-6 select-none bg-[var(--surface-graphite)]/95 p-10 rounded-[var(--radius-md)] border border-[var(--border-subtle)] backdrop-blur-md shadow-2xl font-sans transition-opacity duration-300"
-        >
-          <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
-            SYSTEM_TERMINAL // NODE_06
-          </div>
-          <h2 className="text-4xl font-extrabold text-[var(--text-primary)] font-heading">
-            EXPLORE THE ARCHITECTURE
-          </h2>
-          <div className="flex justify-center gap-4 pt-2">
-            <Button href="/projects" variant="primary" size="md">
-              PROJECT ARCHIVE
-            </Button>
-            <Button href="/resume" variant="secondary" size="md">
-              RESUME
-            </Button>
-            <Button href="/contact" variant="outline" size="md">
-              CONTACT
-            </Button>
+          {/* Explore Architecture Action Card */}
+          <div className="text-center space-y-4 bg-[var(--surface-graphite)]/95 p-8 rounded-[var(--radius-md)] border border-[var(--border-subtle)] backdrop-blur-md shadow-2xl">
+            <h2 className="text-3xl font-extrabold text-[var(--text-primary)] font-heading">
+              EXPLORE THE SYSTEM ARCHITECTURE
+            </h2>
+            <div className="flex justify-center gap-4 pt-2">
+              <Button href="/projects" variant="primary" size="md">
+                PROJECT ARCHIVE
+              </Button>
+              <Button href="/resume" variant="secondary" size="md">
+                RESUME
+              </Button>
+              <Button href="/contact" variant="outline" size="md">
+                CONTACT
+              </Button>
+            </div>
           </div>
         </div>
       </Html>
@@ -334,37 +317,26 @@ const ContinuationNode3D: React.FC<{ progress: number }> = ({ progress }) => {
 };
 
 export const Master3DUniverse: React.FC = () => {
-  // Discrete 6-step Waypoint State (0 to 5)
-  // Step 0: Hero (0.0)
-  // Step 1: Philosophy (0.2)
-  // Step 2: Profile (0.4)
-  // Step 3: CAD Model (0.6)
-  // Step 4: Projects (0.8)
-  // Step 5: Terminal / Explore Architecture (1.0)
-  const [currentStep, setCurrentStep] = useState(0);
-
+  const [targetProgress, setTargetProgress] = useState(0);
   const isCooldownRef = useRef(false);
 
-  // Exact 1-scroll notch step advancement controller
+  // Exact 5% per Wheel Tick (5 scrolls = 25% = 1 Stage Transition!)
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     if (isCooldownRef.current) return;
 
-    if (e.deltaY > 15) {
-      // Scroll Down -> Advance 1 step
-      setCurrentStep((prev) => Math.min(5, prev + 1));
-      isCooldownRef.current = true;
-      setTimeout(() => {
-        isCooldownRef.current = false;
-      }, 400); // 400ms throttle cooldown between scroll notches
-    } else if (e.deltaY < -15) {
-      // Scroll Up -> Retreat 1 step
-      setCurrentStep((prev) => Math.max(0, prev - 1));
-      isCooldownRef.current = true;
-      setTimeout(() => {
-        isCooldownRef.current = false;
-      }, 400);
-    }
+    // Cooldown throttle to prevent double-firing single wheel ticks
+    isCooldownRef.current = true;
+    setTimeout(() => {
+      isCooldownRef.current = false;
+    }, 120);
+
+    const direction = Math.sign(e.deltaY);
+    // Move by exactly 0.05 (5%) per scroll tick
+    setTargetProgress((prev) => {
+      const next = prev + direction * 0.05;
+      return Math.max(0, Math.min(1, Math.round(next * 100) / 100));
+    });
   }, []);
 
   const touchStartRef = useRef(0);
@@ -375,20 +347,18 @@ export const Master3DUniverse: React.FC = () => {
   const handleTouchMove = useCallback((e: TouchEvent) => {
     e.preventDefault();
     if (isCooldownRef.current) return;
-
     const diff = touchStartRef.current - e.touches[0].clientY;
-    if (diff > 30) {
-      setCurrentStep((prev) => Math.min(5, prev + 1));
+    if (Math.abs(diff) > 25) {
       isCooldownRef.current = true;
       setTimeout(() => {
         isCooldownRef.current = false;
-      }, 400);
-    } else if (diff < -30) {
-      setCurrentStep((prev) => Math.max(0, prev - 1));
-      isCooldownRef.current = true;
-      setTimeout(() => {
-        isCooldownRef.current = false;
-      }, 400);
+      }, 150);
+      const direction = Math.sign(diff);
+      touchStartRef.current = e.touches[0].clientY;
+      setTargetProgress((prev) => {
+        const next = prev + direction * 0.05;
+        return Math.max(0, Math.min(1, Math.round(next * 100) / 100));
+      });
     }
   }, []);
 
@@ -404,12 +374,13 @@ export const Master3DUniverse: React.FC = () => {
     };
   }, [handleWheel, handleTouchStart, handleTouchMove]);
 
-  // Exact target progress corresponding to step (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
-  const targetProgress = currentStep / 5;
+  const jumpToProgress = (target: number) => {
+    setTargetProgress(target);
+  };
 
   return (
     <div className="fixed inset-0 h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)] select-none">
-      {/* Eye-Level 3D WebGL Canvas */}
+      {/* 3D WebGL Canvas */}
       <Canvas gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.9} />
         <directionalLight position={[10, 15, 15]} intensity={1.6} color="#f2f2f0" />
@@ -423,37 +394,33 @@ export const Master3DUniverse: React.FC = () => {
           <LinkageNode3D progress={targetProgress} />
           <ProfileNode3D progress={targetProgress} />
           <ExplodedAssemblyNode3D progress={targetProgress} />
-          <ProjectsNode3D progress={targetProgress} />
-          <ContinuationNode3D progress={targetProgress} />
+          <SystemTerminalNode3D progress={targetProgress} />
         </Float>
       </Canvas>
 
-      {/* On-Screen Waypoint Navigation Bar */}
+      {/* On-Screen Waypoint Jump Bar (5 Scrolls per Stage = 25% per Stage!) */}
       <div className="fixed top-20 right-6 z-40 flex flex-col gap-2 bg-[var(--bg-primary)]/90 p-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] backdrop-blur-md">
-        <button onClick={() => setCurrentStep(0)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${currentStep === 0 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          01 // HERO (NAME)
+        <button onClick={() => jumpToProgress(0.0)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress <= 0.12 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+          01 // HERO (0 SCROLLS)
         </button>
-        <button onClick={() => setCurrentStep(1)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${currentStep === 1 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          02 // STATEMENT
+        <button onClick={() => jumpToProgress(0.25)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.12 && targetProgress <= 0.38 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+          02 // STATEMENT (5 SCROLLS)
         </button>
-        <button onClick={() => setCurrentStep(2)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${currentStep === 2 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          03 // PROFILE
+        <button onClick={() => jumpToProgress(0.50)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.38 && targetProgress <= 0.62 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+          03 // PROFILE (10 SCROLLS)
         </button>
-        <button onClick={() => setCurrentStep(3)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${currentStep === 3 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          04 // CAD MODEL
+        <button onClick={() => jumpToProgress(0.75)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.62 && targetProgress <= 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+          04 // CAD ASSEMBLY (15 SCROLLS)
         </button>
-        <button onClick={() => setCurrentStep(4)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${currentStep === 4 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          05 // PROJECTS
-        </button>
-        <button onClick={() => setCurrentStep(5)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${currentStep === 5 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          06 // TERMINAL
+        <button onClick={() => jumpToProgress(1.00)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+          05 // ARCHITECTURE (20 SCROLLS)
         </button>
       </div>
 
-      {/* 3D Camera Flight HUD Indicator Bar */}
-      <div className="fixed bottom-6 left-6 z-40 flex items-center gap-3 font-mono text-[11px] text-[var(--accent)] bg-[var(--bg-primary)]/90 px-3 py-1.5 rounded-[var(--radius-sm)] border border-[var(--border-accent)] backdrop-blur-md">
+      {/* Progress HUD Indicator: Shows Scroll Ticks & Exact Percentage */}
+      <div className="fixed bottom-6 left-6 z-40 flex items-center gap-3 font-mono text-[11px] text-[var(--accent)] bg-[var(--bg-primary)]/90 px-3.5 py-2 rounded-[var(--radius-sm)] border border-[var(--border-accent)] backdrop-blur-md shadow-xl">
         <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-ping" />
-        <span>3D STAGE: 0{currentStep + 1} / 06 • EXACT 1-SCROLL NOTCH STEP</span>
+        <span>SCROLL TICKS: {Math.round(targetProgress * 20)} / 20 • ({Math.round(targetProgress * 100)}%)</span>
       </div>
     </div>
   );
