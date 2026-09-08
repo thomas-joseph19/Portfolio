@@ -1,5 +1,5 @@
-import { UnifiedHomeExperience } from "@/components/scenes/UnifiedHomeExperience";
+import { Master3DUniverse } from "@/components/scenes/Master3DUniverse";
 
 export default function HomePage() {
-  return <UnifiedHomeExperience />;
+  return <Master3DUniverse />;
 }
