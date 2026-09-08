@@ -11,8 +11,8 @@ export const hprL1RocketProject: Project = {
   role: "Lead Mechanical / Rocketry Builder",
   timeline: "November 2025",
   categories: ["Aerospace Engineering", "Rocketry", "Manufacturing"],
-  tags: ["High-Powered Rocketry", "SolidWorks", "OpenMotor", "KXR UCF", "NAR/TRA Level 1"],
-  technologies: ["SolidWorks (CAD Modeling)", "OpenRocket / OpenMotor", "Wood Glue Filleting", "Dual Centering Rings", "Recovery Rigging"],
+  tags: ["High-Powered Rocketry", "SolidWorks", "KXR UCF", "NAR/TRA Level 1"],
+  technologies: ["SolidWorks (CAD Modeling)", "Wood Glue Filleting", "Dual Centering Rings", "Recovery Rigging"],
   skills: ["SOLIDWORKS", "MATLAB", "KINEMATICS", "Finite-Element-Analysis"],
   featured: true,
   thumbnail: {
@@ -37,13 +37,6 @@ export const hprL1RocketProject: Project = {
       aspectRatio: "4/3",
       caption: "SolidWorks 3D CAD model showcasing internal motor cage, centering rings, and fin tabs.",
     },
-    {
-      type: "diagram",
-      src: "/projects/hpr-l1-rocket/openmotor-thrust-curve.jpg",
-      alt: "OpenMotor / OpenRocket Thrust Curve & Stability Simulation",
-      aspectRatio: "4/3",
-      caption: "OpenMotor thrust curve analysis and stability margin calculation (1.5–2.0 calibers).",
-    },
   ],
   sections: [
     {
@@ -63,8 +56,8 @@ export const hprL1RocketProject: Project = {
     },
     {
       id: "simulations-cad",
-      heading: "04 // SOLIDWORKS CAD & OPENMOTOR SIMULATIONS",
-      body: "Designed full parametric 3D CAD assemblies in SolidWorks to verify component fitment, fin tab slot alignment, and C.G./C.P. margins. Simulated motor thrust curves, burn duration, peak altitude, and flight kinematics in OpenMotor to ensure stability targets were met prior to motor load.",
+      heading: "04 // SOLIDWORKS CAD & STRUCTURAL MODELING",
+      body: "Designed full parametric 3D CAD assemblies in SolidWorks to verify component fitment, fin tab slot alignment, motor retainer Z-clips, and C.G./C.P. margins prior to material cutting and assembly.",
       media: [
         {
           type: "cad-render",
