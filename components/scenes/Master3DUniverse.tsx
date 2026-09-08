@@ -217,57 +217,15 @@ const ProfileNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
-// --- NODE 4: EXPLODED PLANETARY CAD ASSEMBLY (X = -5, Z = -10, Progress 0.75) ---
+// --- NODE 4: 3D CAD KINEMATIC MODEL ASSEMBLY (X = -5, Z = -10, Progress 0.75) ---
 const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) => {
-  const groupRef = useRef<THREE.Group>(null);
-  const [userModelUrl, setUserModelUrl] = useState<string | null>(null);
-  const [modelName, setModelName] = useState<string | null>(null);
-  const explode = Math.sin(progress * Math.PI * 4) * 1.5;
-
-  useFrame(() => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = progress * Math.PI * 4;
-    }
-  });
-
   const distFromCam = Math.abs(progress - 0.75);
   const opacity = Math.max(0, 1 - distFromCam * 4.5);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const blobUrl = URL.createObjectURL(file);
-      setUserModelUrl(blobUrl);
-      setModelName(file.name);
-    }
-  };
-
   return (
     <group position={[-5, 0.2, -10]}>
-      <CustomCadModelLoader3D customModelUrl={userModelUrl} progress={progress} />
-
-      {!userModelUrl && (
-        <group ref={groupRef}>
-          <mesh position={[0, 1 + explode, 0]}>
-            <cylinderGeometry args={[2.0, 2.0, 0.2, 24]} />
-            <meshStandardMaterial color="#6fb3c2" metalness={0.9} wireframe />
-          </mesh>
-          <mesh position={[0, 0, 0]}>
-            <cylinderGeometry args={[0.7, 0.7, 0.5, 16]} />
-            <meshStandardMaterial color="#6fb3c2" emissive="#6fb3c2" emissiveIntensity={0.7} />
-          </mesh>
-          {[0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2].map((ang, idx) => (
-            <mesh key={idx} position={[Math.cos(ang) * (1.2 + explode), 0, Math.sin(ang) * (1.2 + explode)]}>
-              <cylinderGeometry args={[0.5, 0.5, 0.4, 12]} />
-              <meshStandardMaterial color="#f2f2f0" metalness={0.8} />
-            </mesh>
-          ))}
-          <mesh position={[0, -1 - explode, 0]}>
-            <cylinderGeometry args={[2.2, 2.2, 0.2, 24]} />
-            <meshStandardMaterial color="#1c1c1f" metalness={0.8} wireframe />
-          </mesh>
-        </group>
-      )}
+      {/* Permanent 3D CAD Model (public/cad/homepage-cad.glb) */}
+      <CustomCadModelLoader3D progress={progress} />
 
       <Html position={[0, 0, 0]} center distanceFactor={7}>
         <div
@@ -275,39 +233,16 @@ const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) =>
           className="w-[640px] text-center space-y-4 select-none font-sans transition-opacity duration-300"
         >
           <div className="mono-label text-xs tracking-widest text-[var(--accent)]">
-            KINEMATICS // STAGE_04 // CAD_MODEL_PORT
+            KINEMATICS // STAGE_04 // 3D_CAD_ASSEMBLY
           </div>
 
-          <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-4 shadow-2xl">
+          <div className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)]/95 backdrop-blur-md space-y-3 shadow-2xl">
             <h3 className="text-2xl font-bold text-[var(--text-primary)] font-heading">
-              {modelName ? `ACTIVE MODEL: ${modelName}` : "EXPLODED CAD ASSEMBLY"}
+              MECHANICAL CAD ASSEMBLY
             </h3>
             <p className="text-sm text-[var(--text-secondary)]">
-              Upload your own 3D CAD model file (.gltf / .glb / .stl) to render it directly in the background space!
+              Interactive 3D mechanical CAD model with real-time kinematic rotation and materials.
             </p>
-
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <label className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--accent)] text-[var(--bg-primary)] font-mono text-xs font-bold cursor-pointer hover:bg-[var(--accent-hover)] transition-colors shadow-md">
-                <span>⚡ LOAD CUSTOM 3D MODEL</span>
-                <input
-                  type="file"
-                  accept=".gltf,.glb,.stl"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
-              {userModelUrl && (
-                <button
-                  onClick={() => {
-                    setUserModelUrl(null);
-                    setModelName(null);
-                  }}
-                  className="px-3 py-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-mono text-xs hover:text-[var(--text-primary)] transition-colors"
-                >
-                  RESET TO DEFAULT
-                </button>
-              )}
-            </div>
           </div>
         </div>
       </Html>
@@ -318,7 +253,6 @@ const ExplodedAssemblyNode3D: React.FC<{ progress: number }> = ({ progress }) =>
 // --- NODE 5: SYSTEM TERMINAL / ARCHITECTURE CONTINUATION (Z = -22, Progress 1.00) ---
 const SystemTerminalNode3D: React.FC<{ progress: number }> = ({ progress }) => {
   const featuredProjects = getFeaturedProjects();
-  // Fully visible when progress >= 0.85 (5 scrolls from stage 4 to stage 5!)
   const opacity = Math.min(1, Math.max(0, (progress - 0.75) / 0.20));
 
   return (
@@ -379,19 +313,17 @@ export const Master3DUniverse: React.FC = () => {
   const [targetProgress, setTargetProgress] = useState(0);
   const isCooldownRef = useRef(false);
 
-  // Exact 12.5% per Wheel Tick (2 scrolls = 25% = 1 Stage Transition! Total 8 scrolls)
+  // Exact 12.5% per Wheel Tick (2 scrolls = 25% = 1 Stage Transition!)
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     if (isCooldownRef.current) return;
 
-    // Cooldown throttle to prevent double-firing single wheel ticks
     isCooldownRef.current = true;
     setTimeout(() => {
       isCooldownRef.current = false;
     }, 120);
 
     const direction = Math.sign(e.deltaY);
-    // Move by exactly 0.125 (12.5%) per scroll tick = 2 scrolls per stage!
     setTargetProgress((prev) => {
       const next = prev + direction * 0.125;
       return Math.max(0, Math.min(1, Math.round(next * 1000) / 1000));
@@ -457,29 +389,29 @@ export const Master3DUniverse: React.FC = () => {
         </Float>
       </Canvas>
 
-      {/* On-Screen Waypoint Jump Bar (2 Scrolls per Stage = 25% per Stage!) */}
+      {/* On-Screen Waypoint Jump Bar */}
       <div className="fixed top-20 right-6 z-40 flex flex-col gap-2 bg-[var(--bg-primary)]/90 p-2 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] backdrop-blur-md">
         <button onClick={() => jumpToProgress(0.0)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress <= 0.12 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          01 // HERO (0 SCROLLS)
+          01 // HERO
         </button>
         <button onClick={() => jumpToProgress(0.25)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.12 && targetProgress <= 0.38 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          02 // STATEMENT (2 SCROLLS)
+          02 // STATEMENT
         </button>
         <button onClick={() => jumpToProgress(0.50)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.38 && targetProgress <= 0.62 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          03 // PROFILE (4 SCROLLS)
+          03 // PROFILE
         </button>
         <button onClick={() => jumpToProgress(0.75)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.62 && targetProgress <= 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          04 // CAD ASSEMBLY (6 SCROLLS)
+          04 // CAD KINEMATICS
         </button>
         <button onClick={() => jumpToProgress(1.00)} className={`mono-label px-2.5 py-1 text-[10px] rounded-[var(--radius-sm)] text-left cursor-pointer transition-colors ${targetProgress > 0.88 ? "bg-[var(--accent)] text-[var(--bg-primary)] font-bold" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
-          05 // ARCHITECTURE (8 SCROLLS)
+          05 // ARCHITECTURE
         </button>
       </div>
 
-      {/* Progress HUD Indicator: Shows Scroll Ticks & Exact Percentage */}
+      {/* Progress HUD Indicator */}
       <div className="fixed bottom-6 left-6 z-40 flex items-center gap-3 font-mono text-[11px] text-[var(--accent)] bg-[var(--bg-primary)]/90 px-3.5 py-2 rounded-[var(--radius-sm)] border border-[var(--border-accent)] backdrop-blur-md shadow-xl">
         <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-ping" />
-        <span>SCROLL TICKS: {Math.round(targetProgress * 8)} / 8 • ({Math.round(targetProgress * 100)}%)</span>
+        <span>SYSTEM PROGRESS • {Math.round(targetProgress * 100)}%</span>
       </div>
     </div>
   );

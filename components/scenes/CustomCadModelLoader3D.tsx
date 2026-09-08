@@ -5,7 +5,7 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { GLTFLoader, DRACOLoader } from "three-stdlib";
 import * as THREE from "three";
 
-// Instantiate DRACOLoader with Google CDN decoder binaries for compressed CAD models
+// Instantiate DRACOLoader for compressed CAD models
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
 
@@ -70,8 +70,44 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
     if (!gltf || !gltf.scene) return { clonedScene: null, scale: 1 };
     const scene = gltf.scene.clone(true);
 
-    // Compute bounding box
-    const box = new THREE.Box3().setFromObject(scene);
+    // Compute robust bounding box by filtering out extreme outlier nodes (> 1000 units)
+    const box = new THREE.Box3();
+    let validMeshes = 0;
+
+    scene.traverse((child: any) => {
+      if (child.isMesh && child.geometry) {
+        child.geometry.computeBoundingBox();
+        const meshBox = child.geometry.boundingBox.clone();
+        meshBox.applyMatrix4(child.matrixWorld);
+
+        // Check if mesh box is within sane CAD bounds (< 500 units from origin)
+        const sizeX = Math.abs(meshBox.max.x - meshBox.min.x);
+        const sizeY = Math.abs(meshBox.max.y - meshBox.min.y);
+        const sizeZ = Math.abs(meshBox.max.z - meshBox.min.z);
+
+        if (sizeX < 500 && sizeY < 500 && sizeZ < 500) {
+          box.expandByObject(child);
+          validMeshes++;
+        }
+
+        // Enhance material visibility & contrast for dark CAD parts
+        child.material.side = THREE.DoubleSide;
+        if (child.material.color) {
+          if (
+            child.material.color.r < 0.05 &&
+            child.material.color.g < 0.05 &&
+            child.material.color.b < 0.05
+          ) {
+            child.material.color.set("#5a6578");
+          }
+        }
+      }
+    });
+
+    if (validMeshes === 0 || box.isEmpty()) {
+      box.setFromObject(scene);
+    }
+
     const center = new THREE.Vector3();
     const size = new THREE.Vector3();
     box.getCenter(center);
@@ -80,25 +116,9 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
     // Center model at pivot [0, 0, 0]
     scene.position.sub(center);
 
-    // Make sure un-lit or raw CAD materials have clean visibility
-    scene.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        child.material.side = THREE.DoubleSide;
-        if (child.material.color) {
-          // Enhance contrast for dark materials
-          if (
-            child.material.color.r < 0.1 &&
-            child.material.color.g < 0.1 &&
-            child.material.color.b < 0.1
-          ) {
-            child.material.color.set("#4a5568");
-          }
-        }
-      }
-    });
-
     const maxDim = Math.max(size.x, size.y, size.z);
-    const targetScale = maxDim > 0 ? 3.5 / maxDim : 1;
+    // Target size ~3.2 units in 3D viewport space
+    const targetScale = maxDim > 0 && maxDim < 10000 ? 3.2 / maxDim : 1.5;
 
     return { clonedScene: scene, scale: targetScale };
   }, [gltf]);
@@ -119,7 +139,7 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
   );
 };
 
-// Fallback procedural geometry rendered while loading or if model is missing / failed
+// Fallback procedural geometry rendered while loading or if model fails
 const ProceduralFallback: React.FC<{ progress: number }> = ({ progress }) => {
   const groupRef = useRef<THREE.Group>(null);
   const explode = Math.sin(progress * Math.PI * 4) * 1.2;
