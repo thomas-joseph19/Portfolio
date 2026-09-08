@@ -1,9 +1,44 @@
 "use client";
 
-import React, { useRef, useMemo, Suspense } from "react";
+import React, { useRef, useMemo, Suspense, Component, ReactNode } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three-stdlib";
+import { GLTFLoader, DRACOLoader } from "three-stdlib";
 import * as THREE from "three";
+
+// Instantiate DRACOLoader with Google CDN decoder binaries for compressed CAD models
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
+
+interface ErrorBoundaryProps {
+  fallback: ReactNode;
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class CadErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.warn("CAD Model Loader safely caught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 interface ModelProps {
   url: string;
@@ -16,7 +51,7 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
   // Next.js basePath support for GitHub Pages static export (/Portfolio)
   const isGithubActions = process.env.NEXT_PUBLIC_GITHUB_ACTIONS === "true";
   const basePath = isGithubActions ? "/Portfolio" : "";
-  
+
   // Format URL properly
   const resolvedUrl = url.startsWith("blob:")
     ? url
@@ -24,7 +59,10 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
     ? `${basePath}${url}`
     : url;
 
-  const gltf = useLoader(GLTFLoader, resolvedUrl);
+  // Load GLTF with Draco compression support
+  const gltf = useLoader(GLTFLoader, resolvedUrl, (loader) => {
+    loader.setDRACOLoader(dracoLoader);
+  });
 
   // Clone scene & compute bounding box to auto-center & auto-scale any CAD model
   const { clonedScene, scale } = useMemo(() => {
@@ -47,7 +85,11 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
         child.material.side = THREE.DoubleSide;
         if (child.material.color) {
           // Enhance contrast for dark materials
-          if (child.material.color.r < 0.1 && child.material.color.g < 0.1 && child.material.color.b < 0.1) {
+          if (
+            child.material.color.r < 0.1 &&
+            child.material.color.g < 0.1 &&
+            child.material.color.b < 0.1
+          ) {
             child.material.color.set("#4a5568");
           }
         }
@@ -76,7 +118,7 @@ const CadModelInner: React.FC<ModelProps> = ({ url, progress }) => {
   );
 };
 
-// Fallback procedural geometry rendered while loading or if model is missing
+// Fallback procedural geometry rendered while loading or if model is missing / failed
 const ProceduralFallback: React.FC<{ progress: number }> = ({ progress }) => {
   const groupRef = useRef<THREE.Group>(null);
   const explode = Math.sin(progress * Math.PI * 4) * 1.2;
@@ -125,8 +167,10 @@ export const CustomCadModelLoader3D: React.FC<CustomCadModelLoader3DProps> = ({
   const activeUrl = customModelUrl || defaultUrl;
 
   return (
-    <Suspense fallback={<ProceduralFallback progress={progress} />}>
-      <CadModelInner url={activeUrl} progress={progress} />
-    </Suspense>
+    <CadErrorBoundary fallback={<ProceduralFallback progress={progress} />}>
+      <Suspense fallback={<ProceduralFallback progress={progress} />}>
+        <CadModelInner url={activeUrl} progress={progress} />
+      </Suspense>
+    </CadErrorBoundary>
   );
 };
