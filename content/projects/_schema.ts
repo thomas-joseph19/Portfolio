@@ -14,6 +14,26 @@ export interface MediaItem {
   aspectRatio: string;       // e.g. "16/9", "4/3", "4/5" — required even when src is null
   objectFit?: "cover" | "contain"; // "contain" prevents cropping tall/portrait photos
   caption?: string;
+  placeholderLabel?: string; // Custom badge / header text for placeholder state
+}
+
+export interface CodeSnippet {
+  language: string;
+  filename?: string;
+  code: string;
+  caption?: string;
+}
+
+export interface ProjectTable {
+  headers: string[];
+  rows: string[][];
+  caption?: string;
+}
+
+export interface ProjectCallout {
+  title: string;
+  description: string;
+  badge?: string;
 }
 
 export interface ProjectSection {
@@ -21,6 +41,9 @@ export interface ProjectSection {
   heading: string;
   body: string | null;       // null => render placeholder text for this section
   media?: MediaItem[];
+  codeSnippet?: CodeSnippet;
+  table?: ProjectTable;
+  callouts?: ProjectCallout[];
 }
 
 export interface Project {
