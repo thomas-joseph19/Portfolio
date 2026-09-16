@@ -132,8 +132,7 @@ export const bionicHandProject: Project = {
       media: [
         {
           type: "diagram",
-          src: null, // TO INSERT IMAGE: Save image to public/projects/bionic-hand/circuit-diagram.png and set src: "/projects/bionic-hand/circuit-diagram.png"
-          placeholderLabel: "CIRCUIT SCHEMATIC DIAGRAM",
+          src: "/projects/bionic-hand/circuit-diagram.png",
           alt: "Electrical circuit schematic diagram for bionic hand Arduino, PCA9685, and A4988",
           aspectRatio: "16/9",
           objectFit: "contain",
@@ -141,8 +140,7 @@ export const bionicHandProject: Project = {
         },
         {
           type: "video",
-          src: null, // TO INSERT VIDEO: Save video to public/projects/bionic-hand/electrical-demo.mp4 and set src: "/projects/bionic-hand/electrical-demo.mp4"
-          placeholderLabel: "BENCH DEMONSTRATION VIDEO",
+          src: "/projects/bionic-hand/electrical-demo.mp4",
           alt: "Bench test demonstration video showing physical components working together",
           aspectRatio: "16/9",
           objectFit: "contain",
@@ -153,7 +151,7 @@ export const bionicHandProject: Project = {
     {
       id: "firmware",
       heading: "04 // EMBEDDED MOTOR CONTROL CODE",
-      body: "Arduino C++ sketch managing I²C PWM calibration, stepper commutation pulses, and non-blocking input handling.",
+      body: "Arduino C++ sketch managing I²C PWM calibration, non-blocking servo timing, and stepper commutation pulses.",
       codeSnippet: {
         language: "cpp",
         filename: "bionic_hand_controller.ino",
@@ -161,45 +159,182 @@ export const bionicHandProject: Project = {
         code: `#include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-Adafruit_PWMServoDriver pwm(0x40);
+// =====================================================
+// GLOBAL VARIABLES / SETTINGS
+// =====================================================
 
-const int PIN_DIR   = 2;
-const int PIN_STEP  = 3;
-const int PIN_BTNS[7] = {4, 5, 6, 7, 8, 9, 10};
-const int PIN_STEP_BTN = 11;
+// =====================================================
+// SERIAL
+// =====================================================
+const long SERIAL_BAUD_RATE = 9600;
 
-#define SERVO_MIN 150  // 0° pulse tick (~1ms)
-#define SERVO_MAX 600  // 180° pulse tick (~2ms)
+// =====================================================
+// PCA9685
+// =====================================================
+Adafruit_PWMServoDriver srituhobby = Adafruit_PWMServoDriver();
+const int PCA9685_FREQUENCY = 60;
 
+// =====================================================
+// SERVOS
+// =====================================================
+const int NUMBER_OF_SERVOS = 7;
+
+// Servo position limits
+const int SERVO_MIN = 150;
+const int SERVO_MAX = 600;
+
+// Amount servo position changes per update (Larger = faster)
+const int SERVO_MOVE_AMOUNT = 5;
+
+// Time between servo updates in milliseconds (Smaller = faster)
+const unsigned long SERVO_MOVE_INTERVAL = 20;
+
+// PCA9685 channel for each servo
+const int SERVO_CHANNELS[NUMBER_OF_SERVOS] = {
+  0, 1, 2, 3, 4, 5, 6
+};
+
+// Arduino button pin for each servo
+const int SERVO_BUTTONS[NUMBER_OF_SERVOS] = {
+  4, 5, 6, 7, 8, 9, 10
+};
+
+// Current position of each servo
+int servoPosition[NUMBER_OF_SERVOS] = {
+  SERVO_MIN, SERVO_MIN, SERVO_MIN, SERVO_MIN, SERVO_MIN, SERVO_MIN, SERVO_MIN
+};
+
+// Direction of each servo (false = clockwise, true = counterclockwise)
+bool servoDirection[NUMBER_OF_SERVOS] = {
+  false, false, false, false, false, false, false
+};
+
+// Previous button state for each servo
+bool previousServoButtonState[NUMBER_OF_SERVOS] = {
+  HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH
+};
+
+// Last time each servo moved
+unsigned long lastServoMove[NUMBER_OF_SERVOS] = {
+  0, 0, 0, 0, 0, 0, 0
+};
+
+// =====================================================
+// STEPPER MOTOR
+// =====================================================
+const int STEPPER_DIR_PIN = 2;
+const int STEPPER_STEP_PIN = 3;
+const int STEPPER_BUTTON = 11;
+
+// Stepper speed: time between HIGH/LOW changes (Smaller = faster)
+const unsigned long STEPPER_INTERVAL = 5000;
+
+bool stepperDirection = false;
+bool stepperState = LOW;
+bool previousStepperButtonState = HIGH;
+unsigned long lastStepperStep = 0;
+
+// =====================================================
+// SETUP
+// =====================================================
 void setup() {
-  Wire.begin();
-  pwm.begin();
-  pwm.setPWMFreq(60); // 60 Hz analog servo PWM
+  // SERIAL
+  Serial.begin(SERIAL_BAUD_RATE);
+  Serial.println("System started");
 
-  pinMode(PIN_DIR, OUTPUT);
-  pinMode(PIN_STEP, OUTPUT);
+  // STEPPER
+  pinMode(STEPPER_DIR_PIN, OUTPUT);
+  pinMode(STEPPER_STEP_PIN, OUTPUT);
+  digitalWrite(STEPPER_STEP_PIN, LOW);
 
-  for (int i = 0; i < 7; i++) {
-    pinMode(PIN_BTNS[i], INPUT_PULLUP);
+  // BUTTONS
+  for (int i = 0; i < NUMBER_OF_SERVOS; i++) {
+    pinMode(SERVO_BUTTONS[i], INPUT_PULLUP);
   }
-  pinMode(PIN_STEP_BTN, INPUT_PULLUP);
+  pinMode(STEPPER_BUTTON, INPUT_PULLUP);
+
+  // PCA9685
+  srituhobby.begin();
+  srituhobby.setPWMFreq(PCA9685_FREQUENCY);
+
+  // INITIALIZE SERVOS
+  for (int i = 0; i < NUMBER_OF_SERVOS; i++) {
+    servoPosition[i] = SERVO_MIN;
+    srituhobby.setPWM(SERVO_CHANNELS[i], 0, servoPosition[i]);
+  }
 }
 
+// =====================================================
+// LOOP
+// =====================================================
 void loop() {
-  // Read pushbutton inputs and actuate servo channels
-  for (int i = 0; i < 7; i++) {
-    int pos = (digitalRead(PIN_BTNS[i]) == LOW) ? SERVO_MAX : SERVO_MIN;
-    pwm.setPWM(i, 0, pos);
+  unsigned long currentMillis = millis();
+  unsigned long currentMicros = micros();
+
+  // ===================================================
+  // SERVO CONTROL
+  // ===================================================
+  for (int i = 0; i < NUMBER_OF_SERVOS; i++) {
+    bool buttonState = digitalRead(SERVO_BUTTONS[i]);
+
+    // BUTTON RELEASED: Reverse direction
+    if (buttonState == HIGH && previousServoButtonState[i] == LOW) {
+      servoDirection[i] = !servoDirection[i];
+      Serial.print("Servo ");
+      Serial.print(i + 1);
+      Serial.print(" direction: ");
+      Serial.println(servoDirection[i] ? "COUNTERCLOCKWISE" : "CLOCKWISE");
+    }
+
+    // BUTTON HELD: Move servo smoothly
+    if (buttonState == LOW && currentMillis - lastServoMove[i] >= SERVO_MOVE_INTERVAL) {
+      lastServoMove[i] = currentMillis;
+
+      if (servoDirection[i] == false) {
+        servoPosition[i] += SERVO_MOVE_AMOUNT;
+        if (servoPosition[i] >= SERVO_MAX) servoPosition[i] = SERVO_MAX;
+      } else {
+        servoPosition[i] -= SERVO_MOVE_AMOUNT;
+        if (servoPosition[i] <= SERVO_MIN) servoPosition[i] = SERVO_MIN;
+      }
+
+      srituhobby.setPWM(SERVO_CHANNELS[i], 0, servoPosition[i]);
+    }
+
+    previousServoButtonState[i] = buttonState;
   }
 
-  // Stepper rotation pulse
-  if (digitalRead(PIN_STEP_BTN) == LOW) {
-    digitalWrite(PIN_DIR, HIGH);
-    digitalWrite(PIN_STEP, HIGH);
-    delayMicroseconds(800);
-    digitalWrite(PIN_STEP, LOW);
-    delayMicroseconds(800);
+  // ===================================================
+  // STEPPER CONTROL
+  // ===================================================
+  bool stepperButtonState = digitalRead(STEPPER_BUTTON);
+
+  if (stepperButtonState != previousStepperButtonState) {
+    if (stepperButtonState == LOW) {
+      Serial.println("STEPPER BUTTON PRESSED");
+    } else {
+      Serial.println("STEPPER BUTTON RELEASED");
+      stepperDirection = !stepperDirection;
+      Serial.print("Stepper direction: ");
+      Serial.println(stepperDirection ? "COUNTERCLOCKWISE" : "CLOCKWISE");
+    }
   }
+
+  // BUTTON HELD: Step motor
+  if (stepperButtonState == LOW) {
+    digitalWrite(STEPPER_DIR_PIN, stepperDirection ? LOW : HIGH);
+
+    if (currentMicros - lastStepperStep >= STEPPER_INTERVAL) {
+      lastStepperStep = currentMicros;
+      stepperState = !stepperState;
+      digitalWrite(STEPPER_STEP_PIN, stepperState);
+    }
+  } else {
+    digitalWrite(STEPPER_STEP_PIN, LOW);
+    stepperState = LOW;
+  }
+
+  previousStepperButtonState = stepperButtonState;
 }`,
       },
     },
