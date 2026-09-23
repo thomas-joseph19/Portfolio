@@ -39,12 +39,12 @@ export default function ResumePage() {
             <span>PHONE: 813-451-7308</span>
             <span>EMAIL: thomas.joseph19@outlook.com</span>
             <a
-              href="https://linkedin.com/in/thomas-joseph"
+              href="https://www.linkedin.com/in/thomas-joseph-5a01072a7/"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-[var(--text-primary)]"
             >
-              linkedin.com/in/thomas-joseph
+              linkedin.com/in/thomas-joseph-5a01072a7
             </a>
           </div>
         </div>

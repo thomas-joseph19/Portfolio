@@ -57,7 +57,7 @@ export default function ContactPage() {
 
         {/* LinkedIn */}
         <a
-          href="https://linkedin.com/in/thomas-joseph"
+          href="https://www.linkedin.com/in/thomas-joseph-5a01072a7/"
           target="_blank"
           rel="noopener noreferrer"
           className="p-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-graphite)] space-y-3 flex flex-col justify-between hover:border-[var(--accent)] transition-colors group"
@@ -65,7 +65,7 @@ export default function ContactPage() {
           <div className="space-y-2">
             <div className="mono-label text-[11px] text-[var(--accent)]">03 // LINKEDIN</div>
             <div className="text-xs font-semibold text-[var(--text-primary)] font-mono break-all group-hover:text-[var(--accent)]">
-              in/thomas-joseph
+              in/thomas-joseph-5a01072a7
             </div>
           </div>
           <div className="pt-4 border-t border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
