@@ -83,7 +83,7 @@ export default function AboutPage() {
             <div className="pt-3 border-t border-[var(--border-subtle)] space-y-1">
               <div className="mono-label text-xs text-[var(--text-muted)]">RELEVANT COURSEWORK:</div>
               <p className="text-xs leading-relaxed text-[var(--text-secondary)]">
-                Statics, Thermodynamics, Solid Mechanics, Structure & Properties of Materials, Differential Equations, Probability & Statistics for Engineers, Calculus I–III.
+                Statics, Thermodynamics, Solid Mechanics, Structure & Properties of Materials, Dynamics.
               </p>
             </div>
           </div>
@@ -99,12 +99,10 @@ export default function AboutPage() {
           </div>
           <div className="space-y-4">
             <div>
-              <div className="mono-label text-xs text-[var(--text-muted)] mb-2">DESIGN, ANALYSIS & KINEMATICS</div>
+              <div className="mono-label text-xs text-[var(--text-muted)] mb-2">ENGINEERING SOFTWARE</div>
               <div className="flex flex-wrap gap-2">
-                <TagPill label="SOLIDWORKS" variant="accent" size="sm" />
+                <TagPill label="SolidWorks" variant="accent" size="sm" />
                 <TagPill label="MATLAB" variant="default" size="sm" />
-                <TagPill label="KINEMATICS" variant="default" size="sm" />
-                <TagPill label="Finite-Element-Analysis" variant="default" size="sm" />
               </div>
             </div>
             <div>
@@ -113,6 +111,15 @@ export default function AboutPage() {
                 <TagPill label="Python" variant="default" size="sm" />
                 <TagPill label="C" variant="default" size="sm" />
                 <TagPill label="Java" variant="default" size="sm" />
+              </div>
+            </div>
+            <div>
+              <div className="mono-label text-xs text-[var(--text-muted)] mb-2">ENGINEERING METHODS</div>
+              <div className="flex flex-wrap gap-2">
+                <TagPill label="CAD Modeling" variant="default" size="sm" />
+                <TagPill label="Engineering Analysis" variant="default" size="sm" />
+                <TagPill label="Data Analysis" variant="default" size="sm" />
+                <TagPill label="Technical Documentation" variant="default" size="sm" />
               </div>
             </div>
           </div>
