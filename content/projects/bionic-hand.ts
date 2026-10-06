@@ -4,15 +4,17 @@ export const bionicHandProject: Project = {
   slug: "bionic-hand",
   title: "Teleoperated Biomimetic Arm & Glove-Controlled Bionic Hand",
   shortDescription:
-    "7-DoF teleoperated biomimetic arm and bionic hand actuated by 7 servos and a base stepper motor, featuring isolated dual-rail power and I²C PWM control.",
+    "7-DoF teleoperated biomimetic arm and bionic hand actuated by 7 servos and a base stepper motor, featuring FDM 3D printed chassis components, isolated dual-rail power, and I²C PWM control.",
   fullOverview:
-    "A teleoperated biomimetic arm and multi-articulated hand designed to mirror human upper-limb kinematics. The system integrates a NEMA 17 base yaw stepper motor, elbow and wrist joints, and tendon-driven digits powered by 7 MG996R servos commanded through an isolated dual-rail Arduino and PCA9685 control architecture.",
-  status: "in-development",
+    "A teleoperated biomimetic arm and multi-articulated hand designed to mirror human upper-limb kinematics. The system integrates a NEMA 17 base yaw stepper motor, elbow and wrist joints, and tendon-driven digits powered by 7 servos commanded through an isolated dual-rail Arduino and PCA9685 control architecture. Currently in physical prototyping with FDM 3D printed structural components.",
+  status: "prototyping",
   role: "Mechatronics Designer & Embedded Developer",
   timeline: "Ongoing / 2026",
   categories: ["Robotics", "Mechatronics", "3D Printing", "CAD Design"],
   tags: [
     "SolidWorks CAD",
+    "3D Printing",
+    "Tolerance Optimization",
     "Arduino Uno",
     "PCA9685 PWM",
     "A4988 Driver",
@@ -22,6 +24,8 @@ export const bionicHandProject: Project = {
   ],
   technologies: [
     "SolidWorks (3D CAD)",
+    "FDM 3D Printing",
+    "CAD Tolerance Tuning",
     "Arduino Uno",
     "PCA9685 16-Ch PWM Driver",
     "A4988 Stepper Driver",
@@ -30,9 +34,8 @@ export const bionicHandProject: Project = {
     "I²C Serial Protocol",
     "Isolated Dual Power Rails",
     "Embedded C++",
-    "FDM 3D Printing",
   ],
-  skills: ["SOLIDWORKS", "MATLAB", "KINEMATICS", "CIRCUIT DESIGN", "EMBEDDED C++"],
+  skills: ["SOLIDWORKS", "3D PRINTING", "MATLAB", "KINEMATICS", "CIRCUIT DESIGN", "EMBEDDED C++"],
   featured: true,
   thumbnail: {
     type: "cad-render",
@@ -59,6 +62,42 @@ export const bionicHandProject: Project = {
       objectFit: "contain",
       caption: "Exploded 3D CAD view detailing servo motor housing, cable tendon routing, and joint pivots.",
     },
+    {
+      type: "image",
+      src: "/projects/bionic-hand/arm-base.png",
+      alt: "3D Printed Arm Base Segment",
+      aspectRatio: "4/3",
+      objectFit: "contain",
+      placeholderLabel: "PHOTO: 3D PRINTED ARM BASE (1 SERVO)",
+      caption: "3D Printed Arm Base: Physical chassis segment housing 1 servo for base rotational motion.",
+    },
+    {
+      type: "image",
+      src: "/projects/bionic-hand/forearm-bottom.png",
+      alt: "3D Printed Forearm Bottom Segment",
+      aspectRatio: "4/3",
+      objectFit: "contain",
+      placeholderLabel: "PHOTO: 3D PRINTED FOREARM BOTTOM (2 SERVOS)",
+      caption: "3D Printed Forearm Bottom: Houses 2 servos for elbow and lower forearm joint movement.",
+    },
+    {
+      type: "image",
+      src: "/projects/bionic-hand/forearm-top.png",
+      alt: "3D Printed Forearm Top Segment",
+      aspectRatio: "4/3",
+      objectFit: "contain",
+      placeholderLabel: "PHOTO: 3D PRINTED FOREARM TOP (4 SERVOS)",
+      caption: "3D Printed Forearm Top: Houses 3 finger flexor servos plus 1 additional servo for wrist articulation.",
+    },
+    {
+      type: "image",
+      src: "/projects/bionic-hand/palm.png",
+      alt: "3D Printed Palm Segment",
+      aspectRatio: "4/3",
+      objectFit: "contain",
+      placeholderLabel: "PHOTO: 3D PRINTED PALM",
+      caption: "3D Printed Palm: Palm structural component with internal tendon routing channels for digit movement.",
+    },
   ],
   sections: [
     {
@@ -77,14 +116,84 @@ export const bionicHandProject: Project = {
       ],
     },
     {
-      id: "actuators",
-      heading: "02 // ACTUATOR SUBSYSTEM",
-      body: "Actuation stack configured for responsive kinematic mirroring and high holding torque.",
+      id: "3d-printing-tolerances",
+      heading: "02 // 3D PRINTING FABRICATION & CAD TOLERANCING",
+      body: "Physical fabrication of the biomimetic arm relies on FDM 3D printed structural components. During initial 3D printing of the structural parts, physical manufacturing challenges arose—specifically tight joint clearances, pin binding, and internal tendon channel friction.\n\nTo overcome these printing difficulties, geometric tolerances were systematically re-analyzed and adjusted directly within the SolidWorks CAD model prior to re-printing, ensuring smooth mechanical joint motion and accurate servo fitment across all segments.\n\nThe physical servo distribution across the printed arm components is structured as follows:\n• Arm Base: 1 servo motor dedicated to base rotation.\n• Forearm Bottom: 2 servos driving lower forearm and elbow articulation.\n• Forearm Top: 4 servos total (3 servos for finger flexion + 1 additional servo for wrist control).\n• Palm: 3D printed structural palm with tendon routing channels.",
       callouts: [
         {
-          title: "7x MG996R Servos",
-          badge: "DIGITS & WRIST",
-          description: "High-torque metal-gear servos actuating tendon lines for finger flexion and wrist articulation.",
+          title: "Arm Base",
+          badge: "1 SERVO",
+          description: "Base structural segment housing 1 servo motor for base rotational positioning.",
+        },
+        {
+          title: "Forearm Bottom",
+          badge: "2 SERVOS",
+          description: "Lower forearm segment housing 2 servos driving elbow and lower arm articulation.",
+        },
+        {
+          title: "Forearm Top",
+          badge: "4 SERVOS",
+          description: "Upper forearm segment housing 3 finger flexor servos + 1 additional wrist articulation servo.",
+        },
+        {
+          title: "Palm Segment",
+          badge: "TENDON GUIDES",
+          description: "3D printed palm featuring routed low-friction channels for finger tendon cables.",
+        },
+        {
+          title: "CAD Tolerance Optimization",
+          badge: "3D PRINT FIX",
+          description: "Overcame 3D printing binding and clearance friction by adjusting CAD tolerances prior to re-printing.",
+        },
+      ],
+      media: [
+        {
+          type: "image",
+          src: "/projects/bionic-hand/arm-base.png",
+          alt: "3D Printed Arm Base Segment",
+          aspectRatio: "4/3",
+          objectFit: "contain",
+          placeholderLabel: "PHOTO: 3D PRINTED ARM BASE (1 SERVO)",
+          caption: "3D Printed Arm Base: Physical chassis segment housing 1 servo for base rotation.",
+        },
+        {
+          type: "image",
+          src: "/projects/bionic-hand/forearm-bottom.png",
+          alt: "3D Printed Forearm Bottom Segment",
+          aspectRatio: "4/3",
+          objectFit: "contain",
+          placeholderLabel: "PHOTO: 3D PRINTED FOREARM BOTTOM (2 SERVOS)",
+          caption: "3D Printed Forearm Bottom: Houses 2 servos for lower arm and elbow joint articulation.",
+        },
+        {
+          type: "image",
+          src: "/projects/bionic-hand/forearm-top.png",
+          alt: "3D Printed Forearm Top Segment",
+          aspectRatio: "4/3",
+          objectFit: "contain",
+          placeholderLabel: "PHOTO: 3D PRINTED FOREARM TOP (4 SERVOS)",
+          caption: "3D Printed Forearm Top: Houses 3 finger servos plus 1 additional servo for wrist movement.",
+        },
+        {
+          type: "image",
+          src: "/projects/bionic-hand/palm.png",
+          alt: "3D Printed Palm Segment",
+          aspectRatio: "4/3",
+          objectFit: "contain",
+          placeholderLabel: "PHOTO: 3D PRINTED PALM",
+          caption: "3D Printed Palm: Structural palm element with integrated tendon cable channels.",
+        },
+      ],
+    },
+    {
+      id: "actuators",
+      heading: "03 // ACTUATOR SUBSYSTEM & SERVO ALLOCATION",
+      body: "Actuation stack configured for responsive kinematic mirroring and high holding torque across 7 total servos and 1 base stepper.",
+      callouts: [
+        {
+          title: "7x MG996R Servos Total",
+          badge: "DIGITS, WRIST & ARM",
+          description: "Distributed across Arm Base (1), Forearm Bottom (2), and Forearm Top (4: 3 fingers + 1 wrist).",
         },
         {
           title: "NEMA 17 Stepper",
@@ -94,13 +203,13 @@ export const bionicHandProject: Project = {
         {
           title: "Tendon Cable Routing",
           badge: "KINEMATICS",
-          description: "High-tensile lines routed through low-friction internal forearm channels.",
+          description: "High-tensile lines routed through low-friction channels in the 3D printed palm and forearm.",
         },
       ],
     },
     {
       id: "electrical-system",
-      heading: "03 // ELECTRICAL SYSTEM & BENCH TEST",
+      heading: "04 // ELECTRICAL SYSTEM & BENCH TEST",
       body: "Decoupled architecture separating 5V logic signals from high-current motor power rails to prevent brownouts. The Arduino Uno drives the PCA9685 over I²C (60 Hz PWM) and commutates the A4988 stepper driver via STEP/DIR pulses.",
       callouts: [
         {
@@ -150,7 +259,7 @@ export const bionicHandProject: Project = {
     },
     {
       id: "firmware",
-      heading: "04 // EMBEDDED MOTOR CONTROL CODE",
+      heading: "05 // EMBEDDED MOTOR CONTROL CODE",
       body: "Arduino C++ sketch managing I²C PWM calibration, non-blocking servo timing, and stepper commutation pulses.",
       codeSnippet: {
         language: "cpp",
@@ -340,12 +449,12 @@ void loop() {
     },
     {
       id: "roadmap",
-      heading: "05 // TELEOPERATION & NEXT STEPS",
-      body: "Next phases focus on integrating the wearable flex-sensor teleoperation glove, 3D printing the arm chassis segments, and calibrating dynamic gesture response latency.",
+      heading: "06 // TELEOPERATION & NEXT STEPS",
+      body: "Next phases focus on assembling the 3D printed arm chassis sections, mounting the 7 servos into their respective arm base, forearm, and wrist mounts, integrating the wearable flex-sensor teleoperation glove, and fine-tuning joint movement calibration.",
     },
   ],
   seo: {
     title: "Teleoperated Bionic Hand & Arm — Thomas Joseph Portfolio",
-    description: "Mechatronics personal project engineering a 7-servo, stepper-driven teleoperated biomimetic bionic hand with PCA9685 PWM and A4988 stepper drivers.",
+    description: "Mechatronics personal project engineering a 7-servo, stepper-driven teleoperated biomimetic bionic hand with 3D printed chassis components, PCA9685 PWM, and A4988 stepper drivers.",
   },
 };
