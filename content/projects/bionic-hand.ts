@@ -91,7 +91,7 @@ export const bionicHandProject: Project = {
     },
     {
       type: "image",
-      src: "/projects/bionic-hand/palm.png",
+      src: "/projects/bionic-hand/Palm.png",
       alt: "3D Printed Palm Segment",
       aspectRatio: "4/3",
       objectFit: "contain",
@@ -176,7 +176,7 @@ export const bionicHandProject: Project = {
         },
         {
           type: "image",
-          src: "/projects/bionic-hand/palm.png",
+          src: "/projects/bionic-hand/Palm.png",
           alt: "3D Printed Palm Segment",
           aspectRatio: "4/3",
           objectFit: "contain",
