@@ -4,12 +4,12 @@ export const bionicHandProject: Project = {
   slug: "bionic-hand",
   title: "Teleoperated Biomimetic Arm & Glove-Controlled Bionic Hand",
   shortDescription:
-    "7-DoF teleoperated biomimetic arm and bionic hand actuated by 7 servos and a base stepper motor, featuring FDM 3D printed chassis components, isolated dual-rail power, and I²C PWM control.",
+    "Completed 7-DoF teleoperated biomimetic arm and bionic hand actuated by 7 servos and a base stepper motor, featuring precision 3D printed chassis components, isolated dual-rail power, and I²C PWM control.",
   fullOverview:
-    "A teleoperated biomimetic arm and multi-articulated hand designed to mirror human upper-limb kinematics. The system integrates a NEMA 17 base yaw stepper motor, elbow and wrist joints, and tendon-driven digits powered by 7 servos commanded through an isolated dual-rail Arduino and PCA9685 control architecture. Currently in physical prototyping with FDM 3D printed structural components.",
-  status: "prototyping",
+    "A completed 7-DoF teleoperated biomimetic arm and multi-articulated hand engineered to mirror human upper-limb kinematics. The system integrates a NEMA 17 base yaw stepper motor, articulated elbow and wrist joints, and tendon-driven digits powered by 7 metal-gear servos commanded through an isolated dual-rail Arduino and PCA9685 control architecture. The structural frame was custom-fabricated using FDM 3D printing with optimized CAD tolerances for smooth joint clearances, dependable multi-axis actuation, and robust load distribution.",
+  status: "completed",
   role: "Mechatronics Designer & Embedded Developer",
-  timeline: "Ongoing / 2026",
+  timeline: "2026",
   categories: ["Robotics", "Mechatronics", "3D Printing", "CAD Design"],
   tags: [
     "SolidWorks CAD",
@@ -38,22 +38,42 @@ export const bionicHandProject: Project = {
   skills: ["SOLIDWORKS", "3D PRINTING", "MATLAB", "KINEMATICS", "CIRCUIT DESIGN", "EMBEDDED C++"],
   featured: true,
   thumbnail: {
-    type: "cad-render",
-    src: "/projects/bionic-hand/cad-model.png",
-    alt: "3D CAD Model of Teleoperated Bionic Arm & Hand",
+    type: "image",
+    src: "/projects/bionic-hand/hand-assembled.png",
+    alt: "Fully Assembled Teleoperated Bionic Hand",
     aspectRatio: "16/9",
     objectFit: "contain",
-    caption: "3D CAD assembly layout showing base rotation, elbow joint, forearm, wrist, and 7-servo bionic hand mechanism.",
+    placeholderLabel: "PHOTO: FULLY ASSEMBLED BIONIC HAND",
+    caption: "Finished Product: Fully assembled multi-articulated bionic hand and chassis.",
   },
   heroMedia: {
-    type: "cad-render",
-    src: "/projects/bionic-hand/cad-model.png",
-    alt: "3D CAD Model of Bionic Hand Assembly",
+    type: "image",
+    src: "/projects/bionic-hand/hand-assembled.png",
+    alt: "Fully Assembled Teleoperated Bionic Hand & Arm",
     aspectRatio: "16/9",
     objectFit: "contain",
-    caption: "Parametric CAD assembly model of the biomimetic arm and glove-controlled hand architecture.",
+    placeholderLabel: "PHOTO: FULLY ASSEMBLED BIONIC HAND",
+    caption: "Finished Product: Fully assembled biomimetic arm and glove-controlled hand architecture.",
   },
   gallery: [
+    {
+      type: "image",
+      src: "/projects/bionic-hand/hand-assembled.png",
+      alt: "Fully Assembled Teleoperated Bionic Hand",
+      aspectRatio: "16/9",
+      objectFit: "contain",
+      placeholderLabel: "PHOTO: FULLY ASSEMBLED BIONIC HAND",
+      caption: "Fully Assembled Bionic Hand: Finished product showing complete structural chassis and articulated digits.",
+    },
+    {
+      type: "image",
+      src: "/projects/bionic-hand/hand-internal-servos.png",
+      alt: "Bionic Hand Internal Servos and Tendon Mechanism",
+      aspectRatio: "16/9",
+      objectFit: "contain",
+      placeholderLabel: "PHOTO: INTERNAL SERVOS & MECHANICS",
+      caption: "Internal Actuator Architecture: Chassis with cover removed displaying the internal servo configuration and tendon routing.",
+    },
     {
       type: "cad-render",
       src: "/projects/bionic-hand/cad-model.png",
@@ -186,8 +206,50 @@ export const bionicHandProject: Project = {
       ],
     },
     {
+      id: "system-assembly",
+      heading: "03 // FULL ASSEMBLY & INTERNAL ACTUATION ARCHITECTURE",
+      body: "The completed bionic hand integrates all 3D printed chassis segments, articulated joints, and actuation modules into a unified mechanical assembly. With the protective casing removed, the internal mechanics showcase the compact packaging of the high-torque metal-gear servos, which route high-tensile tendon lines directly into the palm and digits to achieve responsive multi-finger flexion and wrist positioning.",
+      callouts: [
+        {
+          title: "Fully Assembled Hand",
+          badge: "FINISHED PRODUCT",
+          description: "Integrated physical assembly bringing together the 3D printed base, forearm enclosure, wrist pivot, and fingers.",
+        },
+        {
+          title: "Internal Servo Packaging",
+          badge: "UNCOVERED CHASSIS",
+          description: "Internal chassis view showcasing tight servo motor integration, cable linkages, and organized wire management.",
+        },
+        {
+          title: "Multi-Axis Kinematics",
+          badge: "7 CHANNELS",
+          description: "Independent servo channels providing synchronized digit curl and wrist deflection under responsive PWM control.",
+        },
+      ],
+      media: [
+        {
+          type: "image",
+          src: "/projects/bionic-hand/hand-assembled.png",
+          alt: "Fully Assembled Bionic Hand Finished Product",
+          aspectRatio: "16/9",
+          objectFit: "contain",
+          placeholderLabel: "PHOTO: FULLY ASSEMBLED BIONIC HAND",
+          caption: "Fully Assembled Bionic Hand: Complete physical build showcasing exterior chassis finish and articulated digits.",
+        },
+        {
+          type: "image",
+          src: "/projects/bionic-hand/hand-internal-servos.png",
+          alt: "Bionic Hand Internal Servos and Mechanical Layout",
+          aspectRatio: "16/9",
+          objectFit: "contain",
+          placeholderLabel: "PHOTO: INTERNAL SERVOS (COVER REMOVED)",
+          caption: "Internal Actuator Packaging: Internal view with protective cover removed, displaying servo positions and tendon lines.",
+        },
+      ],
+    },
+    {
       id: "actuators",
-      heading: "03 // ACTUATOR SUBSYSTEM & SERVO ALLOCATION",
+      heading: "04 // ACTUATOR SUBSYSTEM & SERVO ALLOCATION",
       body: "Actuation stack configured for responsive kinematic mirroring and high holding torque across 7 total servos and 1 base stepper.",
       callouts: [
         {
@@ -209,8 +271,8 @@ export const bionicHandProject: Project = {
     },
     {
       id: "electrical-system",
-      heading: "04 // ELECTRICAL SYSTEM & BENCH TEST",
-      body: "Decoupled architecture separating 5V logic signals from high-current motor power rails to prevent brownouts. The Arduino Uno drives the PCA9685 over I²C (60 Hz PWM) and commutates the A4988 stepper driver via STEP/DIR pulses.",
+      heading: "05 // ELECTRICAL SYSTEM & HARDWARE INTEGRATION",
+      body: "Decoupled architecture separating 5V logic signals from high-current motor power rails to prevent brownouts. The Arduino Uno drives the PCA9685 over I²C (60 Hz PWM) and commutates the A4988 stepper driver via STEP/DIR pulses to smoothly control all 7 servos and base rotation simultaneously.",
       callouts: [
         {
           title: "Dual Power Rails",
@@ -247,19 +309,11 @@ export const bionicHandProject: Project = {
           objectFit: "contain",
           caption: "Wiring Schematic: Arduino Uno pinouts, I²C bus lines, A4988 driver connections, and dual power rails.",
         },
-        {
-          type: "video",
-          src: "/projects/bionic-hand/electrical-demo.mp4",
-          alt: "Bench test demonstration video showing physical components working together",
-          aspectRatio: "16/9",
-          objectFit: "contain",
-          caption: "Hardware Bench Test: Validating multi-servo PWM actuation and stepper rotation under unified power distribution.",
-        },
       ],
     },
     {
       id: "firmware",
-      heading: "05 // EMBEDDED MOTOR CONTROL CODE",
+      heading: "06 // EMBEDDED MOTOR CONTROL CODE",
       body: "Arduino C++ sketch managing I²C PWM calibration, non-blocking servo timing, and stepper commutation pulses.",
       codeSnippet: {
         language: "cpp",
@@ -448,13 +502,30 @@ void loop() {
       },
     },
     {
-      id: "roadmap",
-      heading: "06 // TELEOPERATION & NEXT STEPS",
-      body: "Next phases focus on assembling the 3D printed arm chassis sections, mounting the 7 servos into their respective arm base, forearm, and wrist mounts, integrating the wearable flex-sensor teleoperation glove, and fine-tuning joint movement calibration.",
+      id: "system-integration",
+      heading: "07 // SYSTEM INTEGRATION & PERFORMANCE SUMMARY",
+      body: "The completed biomimetic arm and bionic hand brings together custom parametric CAD design, tolerance-optimized 3D printing, dedicated dual-rail power distribution, and responsive embedded control into an articulated mechatronic system capable of synchronized finger articulation, wrist positioning, and base rotation.",
+      callouts: [
+        {
+          title: "Synchronized Actuation",
+          badge: "60 HZ PWM",
+          description: "Multi-channel PWM coordinated through the PCA9685 controller for synchronized digit flexion and wrist articulation.",
+        },
+        {
+          title: "Rigid 3D Printed Frame",
+          badge: "FDM CHASSIS",
+          description: "Custom-toleranced structural assembly providing structural rigidity and housing all actuators securely.",
+        },
+        {
+          title: "Isolated Power Rails",
+          badge: "STABLE 5V",
+          description: "Decoupled logic and motor power rails ensuring glitch-free serial communication under peak servo load.",
+        },
+      ],
     },
   ],
   seo: {
     title: "Teleoperated Bionic Hand & Arm — Thomas Joseph Portfolio",
-    description: "Mechatronics personal project engineering a 7-servo, stepper-driven teleoperated biomimetic bionic hand with 3D printed chassis components, PCA9685 PWM, and A4988 stepper drivers.",
+    description: "Mechatronics personal project engineering a completed 7-servo, stepper-driven teleoperated biomimetic bionic hand with precision 3D printed chassis components, PCA9685 PWM, and A4988 stepper drivers.",
   },
 };
